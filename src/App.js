@@ -19,8 +19,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Main/>} />
-          <Route path='/Budget' element={<CurrentBudget/>} />
-          <Route path='/Budgets' element={<MyBudgets/>} />
+          <Route path='/CurrentBudget' element={<CurrentBudget/>} />
+          <Route path='/MyBudgets' element={<MyBudgets/>} />
           
           <Route path='*' element={<Error404/>} />
         </Routes>
