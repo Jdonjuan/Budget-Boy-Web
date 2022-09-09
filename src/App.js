@@ -12,6 +12,7 @@ import Main from './pages/Main';
 import CurrentBudget from './pages/CurrentBudget';
 import MyBudgets from './pages/MyBudgets';
 import Error404 from './pages/Error404';
+import DefaultBudget from './pages/DefaultBudget';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Main/>} />
+          <Route path='/DefaultBudget' element={<DefaultBudget/>} />
           <Route path='/CurrentBudget' element={<CurrentBudget/>} />
           <Route path='/MyBudgets' element={<MyBudgets/>} />
           
