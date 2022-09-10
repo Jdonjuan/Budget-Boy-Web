@@ -26,7 +26,6 @@ function DefaultBudget() {
         headers: myHeaders,
         redirect: 'follow',
         mode: 'cors'
-        // credentials: 'include'
         };
 
         fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
