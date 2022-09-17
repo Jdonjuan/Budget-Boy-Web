@@ -12,6 +12,9 @@ function Main() {
                     <h1 className="me-auto">Budget Boy</h1>
                     <Button variant="primary" href="https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget">Sign in</Button>
                 </Stack>
+                <hr style={{
+                    color: 'white'
+                }} />
             </header>
             <body className="my-4">
                 <Stack >
