@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Stack } from "react-bootstrap";
-import AddExpenseModal from "../components/AddExpenseModal";
-import BudgetCard from "../components/BudgetCard";
 import BudgetTitle from "../components/BudgetTitle";
 import CategoryCard from "../components/CategoryCard";
 import BB_Nav from "../components/Navbar";
@@ -13,6 +11,7 @@ function DefaultBudget() {
     const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
     const [defaultBudget, setDefaultBudget] = useState(null)
     const CreateBudgetPage = "http://localhost:3000/CreateBudget"
+    const EditBudgetLink = "http://localhost:3000/EditBudget"
 
     function getDefaultBudget(Token) {
                 // make API Call
@@ -149,11 +148,12 @@ function DefaultBudget() {
         }
         else {
             var Budget = JSON.parse(defaultBudget)
+            window.localStorage.setItem('DefaultBudget', defaultBudget);
             return(
                 <Container>
-                        <p>{BudgetResponse}</p>
+                        {/* <p>{BudgetResponse}</p> */}
                         <Stack>
-                            <BudgetCard name={Budget.BudgetName} amount={Budget.BudgetAmountUsed} max={Budget.BudgetAmountTotal}/>
+                            <BudgetTitle name={Budget.BudgetName} amount={Budget.BudgetAmountUsed} max={Budget.BudgetAmountTotal}/>
                         </Stack>
                         <hr style={{color: 'white'}} />
                         <div style={{
@@ -165,11 +165,16 @@ function DefaultBudget() {
                             {Budget.Categories.map((Category, index) => {
                                 console.log(Category)
                                 return(
-                                    <CategoryCard index={index} categoryid={Category.CategoryID} budget={Budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
+                                    <CategoryCard key={index} index={index} categoryid={Category.CategoryID} budget={Budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
                                 )
                             })}
                         </div>
-                        
+                        <Stack>
+                            <Container className="mt-3">
+                                <Button href={EditBudgetLink}>Edit Budget</Button>
+                            </Container>
+                            
+                        </Stack>
                 </Container>
 
             )
@@ -180,7 +185,6 @@ function DefaultBudget() {
         <Container>
             <Container>
                 <BB_Nav/>
-                <hr style={{color: 'white'}} />
             </Container>
             {renderbudget(defaultBudget)}
             <hr style={{

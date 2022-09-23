@@ -1,10 +1,11 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { useRef } from "react";
 
-export default function AddExpenseModal({ show, handleClose, budget, categoryid, amountused, index}) {
+export default function AddBudgetModal({ show, handleClose, budget, budgetid, amountused, index}) {
     console.log("Show: ",show)
     console.log("handle close: ", handleClose)
     const amountRef = useRef()
+    const nameRef = useRef()
     function handleSubmit(e) {
         e.preventDefault()
         // initialize new amount
@@ -47,7 +48,7 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
         body.Categories = []
         budget.Categories.map(cat => {
             // console.log(cat)
-            if (cat.CategoryID === categoryid) {
+            if (cat.CategoryID === budgetid) {
                 //compose new cat object
                 var catobj = {}
                 catobj.PK = {}
@@ -102,7 +103,7 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
                 body.Categories.push(catobj)
             }
         })
-        
+
         console.log("body", body)
         // post new budget (update budget api)
         var loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
@@ -147,11 +148,15 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
         <Modal show={show} onHide={handleClose} centered>
             <Form onSubmit={handleSubmit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Expense</Modal.Title>
+                    <Modal.Title>New Budget</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control ref={nameRef} type="text" required  step={0.01}/>
+                    </Form.Group>
                     <Form.Group className="mb-3" controlId="amount">
-                        <Form.Label>Amount</Form.Label>
+                        <Form.Label>Category</Form.Label>
                         <Form.Control ref={amountRef} type="number" required  step={0.01}/>
                     </Form.Group>
                     <div className="d-flex justify-content-end">
