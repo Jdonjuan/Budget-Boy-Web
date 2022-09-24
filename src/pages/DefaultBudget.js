@@ -29,7 +29,7 @@ function DefaultBudget() {
                 fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    // console.log(result)
+                    console.log("Get Budgets res: ", result)
                     const expired = '{"message":"The incoming token has expired"}'
                     const Unauthorized = '{"message":"Unauthorized"}'
                     if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
@@ -39,7 +39,7 @@ function DefaultBudget() {
                             return JSON.stringify(result)
                         })
                     }
-                    else if (JSON.stringify(result) === '{}') {
+                    else if (JSON.stringify(result) === '{"Budgets":[]}') {
                         
                         console.log("User has no budgets", result)
                         console.log("redirect to Create Budget page")
@@ -115,7 +115,6 @@ function DefaultBudget() {
                 })
                 .catch(error => console.log('error', error));
     }
-    // window.localStorage.setItem('BB_USER_TOKEN', "eyJraWQiOiJSODZ6ZUpINEl1U1RHeUpNUTI2XC82azBTSFYwakRmVFlqTWJkczdycmFrbz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzNGM4ZjNlMS1iNjQ5LTRjMGEtYTI3Yy1mMzFiODg2YWVmMzIiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9QSkdGOHgxaDUiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiIxazZsZDltODlpa2ZwNG5wdHZzaGo1YXFkIiwiZXZlbnRfaWQiOiI2Y2ZlZTk0Yi05NDU5LTRhZmMtODAwZS1lMjQ0MDM0MTMxNmMiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIG9wZW5pZCBwcm9maWxlIGVtYWlsIiwiYXV0aF90aW1lIjoxNjYyODM3OTQ4LCJleHAiOjE2NjI4NDE1NDgsImlhdCI6MTY2MjgzNzk0OCwianRpIjoiNDM3Nzg0ZTctMGY5OC00MjlhLTliZTItNTJiZjljNGNjMjYzIiwidXNlcm5hbWUiOiIzNGM4ZjNlMS1iNjQ5LTRjMGEtYTI3Yy1mMzFiODg2YWVmMzIifQ.J6iFBjXD2zWs1_RnvEbbx5x-RmWyhTACD5-jR_ILyF_VVjvlQwyXnJtNTz4I9OIEy9UE09cHWeaQU6in0G0hJK8x5oiVjpyti_oHI_rKjLfvT0sc57fQMOtZ2-cGsBvOTWocXaW-ErgOrKsvsRDSwpjK1Lcpir11C7O6EyEnkHllDqiJF64pkQaWvtiCQQghIeijEx4KI567Kq3ue44aVvxgKvvfLdfXmihAcI384OREGz0VTfi6_tZqoiK3NIokKBspJodKyTWJzzK92-oC2GJE5vluo97WDJ7yEhxNZuVQB9SN_YQ-UrhtHabZiJmmR69oDd8JbrbzWctvntQ_Tg");
         
     // Get token from URL if exists
     var currentURL = window.location;
@@ -146,7 +145,12 @@ function DefaultBudget() {
         if (BudgetResponse === null) {
             return "Loading..."
         }
+        else if (defaultBudget === '{"Categories":{}}') {
+            console.log("Empty Budget: ", defaultBudget)
+            // window.location.replace(CreateBudgetPage);
+        }
         else {
+            console.log(BudgetResponse)
             var Budget = JSON.parse(defaultBudget)
             window.localStorage.setItem('DefaultBudget', defaultBudget);
             return(

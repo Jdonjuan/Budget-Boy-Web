@@ -11,8 +11,9 @@ import { v4 as uuidV4 } from 'uuid';
 function EditBudget() {
     const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
     const defaultBudgetURL = "http://localhost:3000/DefaultBudget"
+    const CreateBudgetPage = "http://localhost:3000/CreateBudget"
     // const [Budgets, setBudgets] = useState(null)
-    // const CreateBudgetPage = "http://localhost:3000/CreateBudget"
+    
 
     function updateDefualtBudget(Token) {
                 return "Budget Updated."
@@ -92,52 +93,6 @@ function EditBudget() {
 
             }
 
-            function RenderEmptyCategory() {
-                var index = '5';
-                if (addCategory > 0) {
-                    let count = addCategory
-                    for (let i = 0; i < count; i++ ) {
-                        console.log(i)
-                        console.log(count)
-                        return (
-                            <Container >
-                                <Form.Group className="mb-3" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                    <hr style={{color: 'white'}} />
-                                    <Form.Label className="d-flex">Category Name</Form.Label>
-                                    <Form.Control type="text" />
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                    <Form.Label className="d-flex">Max</Form.Label>
-                                    <Form.Control type="text" />
-                                </Form.Group>
-                                <Form.Group className="mb-6" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
-                                    <Form.Check className="d-flex gap-2" type="checkbox" label="Recurring"/>
-                                </Form.Group>
-                            </Container>
-                        )
-                    }
-
-                    return (
-                        <Container >
-                            <Form.Group className="mb-3" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                <hr style={{color: 'white'}} />
-                                <Form.Label className="d-flex">Category Name</Form.Label>
-                                <Form.Control type="text" />
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                <Form.Label className="d-flex">Max</Form.Label>
-                                <Form.Control type="text" />
-                            </Form.Group>
-                            <Form.Group className="mb-6" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
-                                <Form.Check className="d-flex gap-2" type="checkbox" label="Recurring"/>
-                            </Form.Group>
-                        </Container>
-                    )
-                    
-                }
-                
-                
-            }
             
             function addCategory() {
                 // create category object
@@ -314,21 +269,21 @@ function EditBudget() {
                         </Stack>
                         
                     </Form>
-                        <hr style={{color: 'white'}} />
-                        
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                            gap: "1rem",
-                            alignItems: "flex-start"
-                        }}>
-                            {budget.Categories.map((Category, index) => {
-                                console.log(Category)
-                                return(
-                                    <CategoryForm key={index} index={index} budgetid={Category.BudgetID} budget={budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
-                                )
-                            })}
-                        </div>
+                    <hr style={{color: 'white'}} />
+                    
+                    <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                        gap: "1rem",
+                        alignItems: "flex-start"
+                    }}>
+                        {budget.Categories.map((Category, index) => {
+                            console.log(Category)
+                            return(
+                                <CategoryForm key={index} index={index} budgetid={Category.BudgetID} budget={budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
+                            )
+                        })}
+                    </div>
                         
                 </Container>
 
