@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Stack } from "react-bootstrap";
 import logo from "../assets/BudgetBoyLogo.png"
+import BB_Nav from "../components/Navbar";
 
 
 function Error404() {
