@@ -35,6 +35,7 @@ function BB_Nav() {
                     console.log("user has been logged out")
                     window.localStorage.setItem('BB_USER_TOKEN', null);
                     window.localStorage.setItem('DefaultBudget', null);
+                    window.localStorage.setItem('EMAIL', null)
                     }} href={SignOutLink}>Sign Out</Button>
         </Navbar.Collapse>
       </Container>
