@@ -105,7 +105,7 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
         
         console.log("body", body)
         // post new budget (update budget api)
-        var loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
+        var loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
         var Token = window.localStorage.getItem('BB_USER_TOKEN');
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${Token}`);

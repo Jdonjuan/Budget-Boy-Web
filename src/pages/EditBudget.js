@@ -9,9 +9,9 @@ import { v4 as uuidV4 } from 'uuid';
 // if get budgets doesn't work, redirect to cognito sign in page. 
 
 function EditBudget() {
-    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
-    const defaultBudgetURL = "http://localhost:3000/DefaultBudget"
-    const CreateBudgetPage = "http://localhost:3000/CreateBudget"
+    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
+    const defaultBudgetURL = "https://budgetboy.net/DefaultBudget"
+    const CreateBudgetPage = "https://budgetboy.net/CreateBudget"
     // const [Budgets, setBudgets] = useState(null)
     
 
@@ -195,7 +195,6 @@ function EditBudget() {
                 // make api call to update budget
                 console.log("body", body)
                 // post new budget (update budget api)
-                var loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
                 var Token = window.localStorage.getItem('BB_USER_TOKEN');
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", `Bearer ${Token}`);

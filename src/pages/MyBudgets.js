@@ -7,9 +7,9 @@ import BB_Nav from "../components/Navbar";
 // if get budgets doesn't work, redirect to cognito sign in page. 
 
 function MyBudgets() {
-    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
+    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
     const [Budgets, setBudgets] = useState(null)
-    const CreateBudgetPage = "http://localhost:3000/CreateBudget"
+    const CreateBudgetPage = "https://budgetboy.net/CreateBudget"
 
     function getBudgets(Token) {
                 // make API Call

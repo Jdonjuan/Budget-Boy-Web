@@ -6,10 +6,11 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import logo from "../assets/BudgetBoyLogo.png"
 
 function BB_Nav() {
-    const DefaultBudgetLink = "http://localhost:3000/DefaultBudget"
-    const SignOutLink = "https://budgetboy.auth.us-east-1.amazoncognito.com/logout?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
-    const MyBudgetsLink = "http://localhost:3000/MyBudgets"
-    const AccountLink = "http://localhost:3000/Account"
+    const DefaultBudgetLink = "https://budgetboy.net/DefaultBudget"
+    const signinLink =  "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
+    const SignOutLink = "https://budgetboy.auth.us-east-1.amazoncognito.com/logout?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://budgetboy.net/"
+    const MyBudgetsLink = "https://budgetboy.net/MyBudgets"
+    const AccountLink = "https://budgetboy.net/Account"
   return (
     <Navbar bg="none" expand="lg" variant='dark'>
       <Container>
@@ -29,7 +30,7 @@ function BB_Nav() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href={DefaultBudgetLink}>My Budget</Nav.Link>
-            <Nav.Link href={AccountLink}>Account</Nav.Link>
+            {/* <Nav.Link href={AccountLink}>Account</Nav.Link> */}
           </Nav>
           <Button onClick={function logoutUser() {
                     console.log("user has been logged out")
