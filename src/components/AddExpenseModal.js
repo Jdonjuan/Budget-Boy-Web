@@ -2,15 +2,15 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { useRef } from "react";
 
 export default function AddExpenseModal({ show, handleClose, budget, categoryid, amountused, index}) {
-    console.log("Show: ",show)
-    console.log("handle close: ", handleClose)
+    // console.log("Show: ",show)
+    // console.log("handle close: ", handleClose)
     const amountRef = useRef()
     function handleSubmit(e) {
         e.preventDefault()
         // initialize new amount
         const newAmountUsed =  (parseFloat(amountused) + parseFloat(amountRef.current.value)).toString()
-        console.log("new amount:", newAmountUsed)
-        console.log("budget: ", budget)
+        // console.log("new amount:", newAmountUsed)
+        // console.log("budget: ", budget)
         //Calculate BUDGET amount used
         const newBudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(amountRef.current.value)).toString()
         // create body object ready for api post
@@ -103,7 +103,7 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
             }
         })
         
-        console.log("body", body)
+        // console.log("body", body)
         // post new budget (update budget api)
         var loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
         var Token = window.localStorage.getItem('BB_USER_TOKEN');
@@ -124,15 +124,15 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
         fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets?BudgetID=${budget.BudgetID}`, requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log(result)
+            // console.log(result)
             const expired = '{"message":"The incoming token has expired"}'
             const Unauthorized = '{"message":"Unauthorized"}'
             if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
-                console.log("redirect to sign-in")
+                // console.log("redirect to sign-in")
                 window.location.replace(loginURL);
             }
             else {
-                console.log("Success: ", result);
+                // console.log("Success: ", result);
                 window.location.reload()
                 handleClose()
             }

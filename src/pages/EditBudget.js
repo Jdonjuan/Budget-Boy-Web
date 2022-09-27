@@ -41,54 +41,56 @@ function EditBudget() {
             
             function handleBNameChange(value) {
                 budget.BudgetName = value
-                console.log("new budget: ", budget)
+                // console.log("new budget: ", budget)
                 window.localStorage.setItem('DefaultBudget', JSON.stringify(budget) );
             }
 
             function handleChangeInput(index, occuranceValue, id){
-                console.log(index, occuranceValue, id)
+                // console.log(index, occuranceValue, id)
                 // go to category index, swap out the element with the updated element
-                console.log(budget.Categories[index])
+                // console.log(budget.Categories[index])
                 if (id === "cname"){
                     budget.Categories[index].CategoryName = occuranceValue
-                    console.log("new budget: ", budget)
+                    // console.log("new budget: ", budget)
                     window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
                 else if (id === "max") {
                     budget.Categories[index].CategoryAmountTotal = occuranceValue
                     var newBudgetMax = 0
                     budget.Categories.map((Category, index) => {
-                        console.log(parseFloat(Category.CategoryAmountTotal))
+                        // console.log(parseFloat(Category.CategoryAmountTotal))
                         newBudgetMax += parseFloat(Category.CategoryAmountTotal)
                     })
-                    console.log(newBudgetMax)
+                    // console.log(newBudgetMax)
                     budget.BudgetAmountTotal = newBudgetMax.toString()
-                    console.log("new budget: ", budget)
+                    // console.log("new budget: ", budget)
                     window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
                 else if (id === "recurring") {
                     budget.Categories[index].IsRecurring = occuranceValue
                     if (occuranceValue === true){
-                        console.log("Recurring is TRUE: ", occuranceValue)
+                        // console.log("Recurring is TRUE: ", occuranceValue)
                         budget.Categories[index].CategoryAmountUsed = budget.Categories[index].CategoryAmountTotal
                         var newBudgetMax = 0
                         var RecurringAmounts = 0
                         budget.Categories.map((Category, index) => {
-                            console.log(parseFloat(Category.CategoryAmountTotal))
+                            // console.log(parseFloat(Category.CategoryAmountTotal))
                             newBudgetMax += parseFloat(Category.CategoryAmountTotal)
                             if (Category.IsRecurring === true){
                                 RecurringAmounts += parseFloat(Category.CategoryAmountTotal)
                             }
                         })
-                        console.log(newBudgetMax)
+                        // console.log(newBudgetMax)
                         budget.BudgetAmountTotal = newBudgetMax.toString()
-                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(RecurringAmounts)).toString()
-                        console.log("new budget: ", budget)
+                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(budget.Categories[index].CategoryAmountTotal)).toString()
+                        // console.log("new budget: ", budget)
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
 
                     } else {
-                        console.log("Recurring is FALSE: ", occuranceValue)
-                        console.log("new budget: ", budget)
+                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) - parseFloat(budget.Categories[index].CategoryAmountTotal)).toString()
+                        budget.Categories[index].CategoryAmountUsed = "0"
+                        // console.log("Recurring is FALSE: ", occuranceValue)
+                        // console.log("new budget: ", budget)
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                     }
                     
@@ -126,7 +128,7 @@ function EditBudget() {
 
             function deleteCategory(index) {
                 budget.Categories.splice(index, 1)
-                console.log("new budget: ", budget)
+                // console.log("new budget: ", budget)
                 window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 window.location.reload()
             }
@@ -134,10 +136,10 @@ function EditBudget() {
             function submitChanges(){
                 // initiate edited budget variable
                 var editedBudget = window.localStorage.getItem('DefaultBudget')
-                console.log(editedBudget)
+                // console.log(editedBudget)
                 // parse the value
                 var parsedBudget = JSON.parse(editedBudget)
-                console.log(parsedBudget)
+                // console.log(parsedBudget)
                 // create body object (For API Call) from updated budget
                 var body = {}
                 body.BudgetItem = {}
@@ -198,7 +200,7 @@ function EditBudget() {
                     body.Categories.push(catobj)
                 })
                 // make api call to update budget
-                console.log("body", body)
+                // console.log("body", body)
                 // post new budget (update budget api)
                 var Token = window.localStorage.getItem('BB_USER_TOKEN');
                 var myHeaders = new Headers();
@@ -218,15 +220,15 @@ function EditBudget() {
                 fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets?BudgetID=${parsedBudget.BudgetID}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
+                    // console.log(result)
                     const expired = '{"message":"The incoming token has expired"}'
                     const Unauthorized = '{"message":"Unauthorized"}'
                     if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
-                        console.log("redirect to sign-in")
+                        // console.log("redirect to sign-in")
                         window.location.replace(loginURL);
                     }
                     else {
-                        console.log("Success: ", result);
+                        // console.log("Success: ", result);
                         window.location.replace(defaultBudgetURL)
                     }
                 }).catch(error => console.log('error', error));
@@ -239,7 +241,7 @@ function EditBudget() {
                             <Form.Control type="text" placeholder={budget.BudgetName}  defaultValue={budget.BudgetName}/>
                         </Form.Group>
                         {budget.Categories.map((Category, index) => {
-                                console.log(Category)
+                                // console.log(Category)
                                 
                                 return(
                                     <Container key={index} >
@@ -282,7 +284,7 @@ function EditBudget() {
                         alignItems: "flex-start"
                     }}>
                         {budget.Categories.map((Category, index) => {
-                            console.log(Category)
+                            // console.log(Category)
                             return(
                                 <CategoryForm key={index} index={index} budgetid={Category.BudgetID} budget={budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
                             )

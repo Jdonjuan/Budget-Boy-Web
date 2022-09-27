@@ -6,9 +6,9 @@ export default function BudgetTitle ({ categoryid, name, amount, max, budget, in
 
     const classNames = []
     if (parseFloat(amount) > parseFloat(max)) {
-        console.log("Amount is: ", amount);
-        console.log("Max is: ", max)
-        console.log("Amount > Max?: ", (parseFloat(amount) > parseFloat(max)))
+        // console.log("Amount is: ", amount);
+        // console.log("Max is: ", max)
+        // console.log("Amount > Max?: ", (parseFloat(amount) > parseFloat(max)))
         classNames.push("bg-danger")
     }
     

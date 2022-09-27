@@ -29,11 +29,11 @@ function DefaultBudget() {
                 fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log("Get Budgets res: ", result)
+                    // console.log("Get Budgets res: ", result)
                     const expired = '{"message":"The incoming token has expired"}'
                     const Unauthorized = '{"message":"Unauthorized"}'
                     if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
-                        console.log("redirect to sign-in")
+                        // console.log("redirect to sign-in")
                         window.location.replace(loginURL);
                         setDefaultBudget(message => {
                             return JSON.stringify(result)
@@ -41,15 +41,15 @@ function DefaultBudget() {
                     }
                     else if (JSON.stringify(result) === '{"Budgets":[]}') {
                         
-                        console.log("User has no budgets", result)
-                        console.log("redirect to Create Budget page")
+                        // console.log("User has no budgets", result)
+                        // console.log("redirect to Create Budget page")
                         window.location.replace(CreateBudgetPage);
                         setDefaultBudget(message => {
                             return JSON.stringify(result)
                         })
                     }
                     else {
-                        console.log("Budgets: ", result);
+                        // console.log("Budgets: ", result);
                         // get default budget ID
                         var DefaultBudgetID = null;
                         var DBudget = null;
@@ -85,21 +85,21 @@ function DefaultBudget() {
                         .then(result => {
                             // console.log(result)
                             if (result === '{"message":"The incoming token has expired"}' || result === '{"message":"Unauthorized"}') {
-                                console.log("redirect to sign-in")
+                                // console.log("redirect to sign-in")
                                 window.location.replace(loginURL);
                                 setDefaultBudget(message => {
                                     return JSON.stringify(result)
                                 })
                             }
                             else if (JSON.stringify(result) === '{}') {
-                                console.log("Default Budget has no categories", JSON.stringify(result))
+                                // console.log("Default Budget has no categories", JSON.stringify(result))
                                 setDefaultBudget(MyBudget => {
                                     return JSON.stringify({...DBudget, ...result})
                                 })
 
                             }
                             else {
-                                console.log("here's your categories!", result)
+                                // console.log("here's your categories!", result)
                                 // add categories to state {...MyBudget, ...result}
                                 setDefaultBudget(MyBudget => {
                                     return JSON.stringify({...DBudget, ...result})
@@ -124,7 +124,7 @@ function DefaultBudget() {
     // window.localStorage.setItem('BB_USER_TOKEN', accessToken);    
     // if no token in URL
     if (accessToken === null) {
-        console.log('Token Not in url')
+        // console.log('Token Not in url')
         // get stored token
         var accessToken = window.localStorage.getItem('BB_USER_TOKEN')
         // console.log('stored Token:', accessToken)
@@ -133,7 +133,7 @@ function DefaultBudget() {
     }
     // if there is a token in the url
     else {
-        console.log('Token in URL')
+        // console.log('Token in URL')
         window.localStorage.setItem('BB_USER_TOKEN', accessToken);
         getDefaultBudget(accessToken)
 
@@ -150,7 +150,7 @@ function DefaultBudget() {
             // window.location.replace(CreateBudgetPage);
         }
         else {
-            console.log(BudgetResponse)
+            // console.log(BudgetResponse)
             var Budget = JSON.parse(defaultBudget)
             window.localStorage.setItem('DefaultBudget', defaultBudget);
             return(
@@ -159,7 +159,7 @@ function DefaultBudget() {
                         <Stack>
                             <BudgetTitle name={Budget.BudgetName} amount={Budget.BudgetAmountUsed} max={Budget.BudgetAmountTotal}/>
                         </Stack>
-                        <hr style={{color: 'white'}} />
+                        <hr style={{color: 'white', width: '100px'}} />
                         <div style={{
                             display: "grid",
                             gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
@@ -167,7 +167,7 @@ function DefaultBudget() {
                             alignItems: "flex-start"
                         }}>
                             {Budget.Categories.map((Category, index) => {
-                                console.log(Category)
+                                // console.log(Category)
                                 return(
                                     <CategoryCard key={index} index={index} categoryid={Category.CategoryID} budget={Budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
                                 )
