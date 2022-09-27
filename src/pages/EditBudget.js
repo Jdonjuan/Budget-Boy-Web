@@ -72,12 +72,17 @@ function EditBudget() {
                         console.log("Recurring is TRUE: ", occuranceValue)
                         budget.Categories[index].CategoryAmountUsed = budget.Categories[index].CategoryAmountTotal
                         var newBudgetMax = 0
+                        var RecurringAmounts = 0
                         budget.Categories.map((Category, index) => {
                             console.log(parseFloat(Category.CategoryAmountTotal))
                             newBudgetMax += parseFloat(Category.CategoryAmountTotal)
+                            if (Category.IsRecurring === true){
+                                RecurringAmounts += parseFloat(Category.CategoryAmountTotal)
+                            }
                         })
                         console.log(newBudgetMax)
                         budget.BudgetAmountTotal = newBudgetMax.toString()
+                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(RecurringAmounts)).toString
                         console.log("new budget: ", budget)
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
 
