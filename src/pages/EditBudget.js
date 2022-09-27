@@ -82,7 +82,7 @@ function EditBudget() {
                         })
                         console.log(newBudgetMax)
                         budget.BudgetAmountTotal = newBudgetMax.toString()
-                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(RecurringAmounts)).toString
+                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(RecurringAmounts)).toString()
                         console.log("new budget: ", budget)
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
 
