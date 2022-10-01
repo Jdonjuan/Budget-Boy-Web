@@ -127,6 +127,8 @@ function EditBudget() {
             }
 
             function deleteCategory(index) {
+                budget.BudgetAmountTotal = (parseFloat(budget.BudgetAmountTotal) - parseFloat(budget.Categories[index].CategoryAmountTotal)).toString()
+                budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) - parseFloat(budget.Categories[index].CategoryAmountUsed)).toString()
                 budget.Categories.splice(index, 1)
                 // console.log("new budget: ", budget)
                 window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
