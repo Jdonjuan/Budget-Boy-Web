@@ -13,6 +13,8 @@ function DefaultBudget() {
     const CreateBudgetPage = "https://budgetboy.net/CreateBudget"
     const EditBudgetLink = "https://budgetboy.net/EditBudget"
 
+    // window.localStorage.setItem("BB_USER_TOKEN", "")
+
     function getDefaultBudget(Token) {
                 // make API Call
                 var myHeaders = new Headers();
