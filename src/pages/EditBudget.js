@@ -4,14 +4,16 @@ import BudgetCard from "../components/BudgetCard";
 import BB_Nav from "../components/Navbar";
 import CategoryForm from "../components/CategoryForm";
 import { v4 as uuidV4 } from 'uuid';
+import { CreateBudgetURL, SignInURL } from "../components/Vars";
+import { DefaultBudgetURL } from "../components/Vars";
 
 // try api call to get budgets (or check if stored token exists/is valid), if get budgets works, get categories for default budget and display them to the screen
 // if get budgets doesn't work, redirect to cognito sign in page. 
 
 function EditBudget() {
-    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
-    const defaultBudgetURL = "https://budgetboy.net/DefaultBudget"
-    const CreateBudgetPage = "https://budgetboy.net/CreateBudget"
+    const loginURL = SignInURL
+    const defaultBudgetURL = DefaultBudgetURL
+    const CreateBudgetPage = CreateBudgetURL
     // const [Budgets, setBudgets] = useState(null)
     
 
@@ -142,6 +144,13 @@ function EditBudget() {
                 // parse the value
                 var parsedBudget = JSON.parse(editedBudget)
                 // console.log(parsedBudget)
+                // calculate total and used for budget
+                var BudgetTotal = 0
+                var BudgetUsed = 0
+                budget.Categories.map(cat => {
+                    BudgetTotal += parseFloat(cat.CategoryAmountTotal)
+                    BudgetUsed += parseFloat(cat.CategoryAmountUsed)
+                })
                 // create body object (For API Call) from updated budget
                 var body = {}
                 body.BudgetItem = {}
@@ -150,9 +159,9 @@ function EditBudget() {
                 body.BudgetItem.SK = {}
                 body.BudgetItem.SK.S = parsedBudget.SK
                 body.BudgetItem.BudgetAmountTotal = {}
-                body.BudgetItem.BudgetAmountTotal.S = parsedBudget.BudgetAmountTotal
+                body.BudgetItem.BudgetAmountTotal.S = BudgetTotal.toString()
                 body.BudgetItem.BudgetAmountUsed = {}
-                body.BudgetItem.BudgetAmountUsed.S = parsedBudget.BudgetAmountUsed
+                body.BudgetItem.BudgetAmountUsed.S = BudgetUsed.toString()
                 body.BudgetItem.BudgetID = {}
                 body.BudgetItem.BudgetID.S = parsedBudget.BudgetID
                 body.BudgetItem.BudgetName = {}
@@ -202,7 +211,7 @@ function EditBudget() {
                     body.Categories.push(catobj)
                 })
                 // make api call to update budget
-                // console.log("body", body)
+                console.log("body", body)
                 // post new budget (update budget api)
                 var Token = window.localStorage.getItem('BB_USER_TOKEN');
                 var myHeaders = new Headers();
@@ -230,8 +239,12 @@ function EditBudget() {
                         window.location.replace(loginURL);
                     }
                     else {
-                        // console.log("Success: ", result);
-                        window.location.replace(defaultBudgetURL)
+                        console.log("Success: ", result);
+                        console.log("Body sent: ", JSON.stringify(body));
+                        if (result == "Update-Budget-Lambda completed successfully"){
+                            window.location.replace(defaultBudgetURL)
+                        }
+                        // window.location.replace(defaultBudgetURL)
                     }
                 }).catch(error => console.log('error', error));
             }

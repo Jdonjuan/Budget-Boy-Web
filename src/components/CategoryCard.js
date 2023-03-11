@@ -3,12 +3,12 @@ import { Card, ProgressBar } from "react-bootstrap";
 import { currencyFormatter } from "./Utils";
 import AddExpenseModal from "./AddExpenseModal";
 
-export default function CategoryCard ({ categoryid, name, amount, max, budget, index}) {
+export default function CategoryCard ({ categoryid, name, cat, amount, max, budget, index}) {
     const [modalShow, setModalShow] = useState(false);
 
-    const classNames = []
+    const classNames = [];
     if (amount > max) {
-        classNames.push("bg-danger")
+        classNames.push("bg-danger");
     }
     
 
@@ -29,7 +29,7 @@ export default function CategoryCard ({ categoryid, name, amount, max, budget, i
                 <ProgressBar variant={getProgressBarVariant(amount, max)} min={0} max={max} now={amount} />
             </Card.Body>
         </Card>
-        <AddExpenseModal index={index} amountused={amount} categoryid={categoryid} budget={budget} show={modalShow} handleClose={() => setModalShow(false)}/>
+        <AddExpenseModal index={index} amountused={amount} passedCat={cat} categoryid={categoryid} categoryName={name} budget={budget} show={modalShow} handleClose={() => setModalShow(false)}/>
         </>
     )
 }

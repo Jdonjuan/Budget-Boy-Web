@@ -1,10 +1,13 @@
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal, Card } from "react-bootstrap";
 import { useRef } from "react";
+import { currencyFormatter } from "./Utils";
 
-export default function AddExpenseModal({ show, handleClose, budget, categoryid, amountused, index}) {
+export default function AddExpenseModal({ show, handleClose, budget, passedCat, categoryid, amountused, categoryName, index}) {
     // console.log("Show: ",show)
     // console.log("handle close: ", handleClose)
-    const amountRef = useRef()
+    const amountRef = useRef();
+    const expenseNameRef = useRef();
+
     function handleSubmit(e) {
         e.preventDefault()
         // initialize new amount
@@ -13,6 +16,24 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
         // console.log("budget: ", budget)
         //Calculate BUDGET amount used
         const newBudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(amountRef.current.value)).toString()
+        
+        // Create new expense for ExpensesList
+        const expenseObj = {
+            expenseName: expenseNameRef.current.value,
+            expenseAmount: amountRef.current.value,
+            expenseDate: new Date().toLocaleDateString()
+        }
+        console.log('expenseObj', expenseObj);
+
+        // add expensesObj to Expenses list
+        if (passedCat.ExpensesList) {
+            passedCat.ExpensesList.push(expenseObj);
+        }
+        else {
+            passedCat.ExpensesList = [expenseObj]
+        }
+        
+
         // create body object ready for api post
         var body = {}
         body.BudgetItem = {}
@@ -70,6 +91,7 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
                 catobj.IsRecurring.BOOL = cat.IsRecurring
                 catobj.Type = {}
                 catobj.Type.S = cat.Type
+                catobj.ExpensesList = passedCat.ExpensesList
                 
                 // add updated category to list
                 body.Categories.push(catobj)
@@ -97,6 +119,7 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
                 catobj.IsRecurring.BOOL = cat.IsRecurring
                 catobj.Type = {}
                 catobj.Type.S = cat.Type
+                catobj.ExpensesList = cat.ExpensesList
                 
                 // add updated category to list
                 body.Categories.push(catobj)
@@ -132,9 +155,14 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
                 window.location.replace(loginURL);
             }
             else {
-                // console.log("Success: ", result);
-                window.location.reload()
-                handleClose()
+                console.log("Success:", result);
+                console.log("body sent", body)
+                
+                if (result === "Update-Budget-Lambda completed successfully") {
+                    console.log("you can now reload")
+                    window.location.reload()
+                    handleClose()
+                }
             }
         }).catch(error => console.log('error', error));
             
@@ -143,22 +171,52 @@ export default function AddExpenseModal({ show, handleClose, budget, categoryid,
         // window.location.reload()
         
     }
+    function displayExpenses() {
+        return (
+            <>
+                {passedCat.ExpensesList?.map((expense, i) => {
+                    return (
+                    <Card key={i}>
+                        <Card.Body>
+
+                            <div className="d-flex justify-content-between align-items-baseline ">
+                                <div className="me-1">{expense.expenseName}</div>
+                                <div >{currencyFormatter.format(expense.expenseAmount)}</div>
+                                <div >{expense.expenseDate}</div>
+                            </div>
+                            
+                        </Card.Body>
+                    </Card>
+                    )
+                })}
+            </>
+            
+        )
+    }
     return (
         <Modal show={show} onHide={handleClose} centered>
             <Form onSubmit={handleSubmit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Expense</Modal.Title>
+                    <Modal.Title>Add Expense for {passedCat.CategoryName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group className="mb-3" controlId="amount">
+                        <Form.Label>Expense Name</Form.Label>
+                        <Form.Control ref={expenseNameRef} type="text" required defaultValue={categoryName}/>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="amount">
                         <Form.Label>Amount</Form.Label>
                         <Form.Control ref={amountRef} type="number" required  step={0.01}/>
+                        <Form.Text className="text-muted">
+                            e.g. {budget.CurrencySymbol || "$"}13.99
+                        </Form.Text>
                     </Form.Group>
                     <div className="d-flex justify-content-end">
                         <Button variant="primary" type="submit">Submit</Button>
                     </div>
                 </Modal.Body>
             </Form>
+            {displayExpenses()}
         </Modal>
 
     )

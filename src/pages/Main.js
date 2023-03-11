@@ -6,6 +6,7 @@ import DesktopEditBudgetView from "../assets/DesktopEditBudgetView.png"
 import PhoneBudgetView from "../assets/PhoneBudgetView.jpg"
 import PhoneEditBudget from "../assets/PhoneEditBudget.jpg"
 import './Main.css'
+import { SignInURL } from "../components/Vars.js"
 
 function Main() {
     return(
@@ -14,7 +15,7 @@ function Main() {
                 <Stack direction="horizontal" gap="2" className="mb-4">
                     <img src={logo} width="100" />
                     <h1 className="me-auto">Budget Boy</h1>
-                    <Button variant="primary" href="https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget">Sign in</Button>
+                    <Button variant="primary" href={SignInURL}>Sign in</Button>
                 </Stack>
                 <hr style={{
                     color: 'white'
@@ -86,7 +87,7 @@ function Main() {
                     </Carousel>
                     </Container> */}
                     <Container>
-                        <Button href="https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget">Sign in</Button>
+                        <Button href={SignInURL}>Sign in</Button>
                     </Container>
                     
                 </Stack>
