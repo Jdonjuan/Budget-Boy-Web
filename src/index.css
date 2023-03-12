@@ -7,9 +7,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  background-color: rgb(255, 255, 255);
+.App {
+  background-color: #c3ecf8;
 }
+
+html {
+  background-color: #c3ecf8;
+}
+
+/* * {
+  background-color: rgb(255, 255, 255);
+} */
 
 /* * {
   background-color: rgb(41, 41, 41);

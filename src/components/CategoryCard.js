@@ -3,10 +3,10 @@ import { Card, ProgressBar } from "react-bootstrap";
 import { currencyFormatter } from "./Utils";
 import AddExpenseModal from "./AddExpenseModal";
 
-export default function CategoryCard ({ categoryid, name, cat, amount, max, budget, index}) {
+export default function CategoryCard ({ categoryid, name, cat, amount, max, budget, index, setDefaultBudget}) {
     const [modalShow, setModalShow] = useState(false);
 
-    const classNames = [];
+    const classNames = ["border-primary"];
     if (amount > max) {
         classNames.push("bg-danger");
     }
@@ -18,18 +18,18 @@ export default function CategoryCard ({ categoryid, name, cat, amount, max, budg
             <Card.Body>
                 <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
                     <div className="me-2">{name}</div>
-                    <div className="fs-6">{currencyFormatter.format(max - amount)}</div>
                     <div className="d-flex align-items-baseline fs-6 text-muted">
                         {currencyFormatter.format(amount)}  
                         <span className="text-muted fs-6 ms-1">
                         / {currencyFormatter.format(max)}
                         </span>
                     </div>
+                    <div className="fs-6">{currencyFormatter.format(max - amount)}</div>
                 </Card.Title>
                 <ProgressBar variant={getProgressBarVariant(amount, max)} min={0} max={max} now={amount} />
             </Card.Body>
         </Card>
-        <AddExpenseModal index={index} amountused={amount} passedCat={cat} categoryid={categoryid} categoryName={name} budget={budget} show={modalShow} handleClose={() => setModalShow(false)}/>
+        <AddExpenseModal index={index} amountused={amount} setDefaultBudget={setDefaultBudget} passedCat={cat} categoryid={categoryid} categoryName={name} budget={budget} show={modalShow} handleClose={() => setModalShow(false)}/>
         </>
     )
 }

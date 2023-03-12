@@ -19,7 +19,7 @@ function DefaultBudget() {
     window.localStorage.setItem('DefaultBudget', null);
     window.localStorage.setItem('EMAIL', null);
 
-    window.localStorage.setItem("BB_USER_TOKEN", "eyJraWQiOiJSODZ6ZUpINEl1U1RHeUpNUTI2XC82azBTSFYwakRmVFlqTWJkczdycmFrbz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzOTk3MjdkNy04MGZiLTQ0MDAtYTIwMC1hMWI3MDI0YzhkM2IiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9QSkdGOHgxaDUiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiIxazZsZDltODlpa2ZwNG5wdHZzaGo1YXFkIiwiZXZlbnRfaWQiOiJjMWI2NDFkMC1mZTczLTRmYTgtYWUxMy00YjgxOTFmN2Y5ZGUiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIG9wZW5pZCBwcm9maWxlIGVtYWlsIiwiYXV0aF90aW1lIjoxNjc4NTAxMTI3LCJleHAiOjE2Nzg1ODc1MjcsImlhdCI6MTY3ODUwMTEyNywianRpIjoiOGUxYjBlNTMtYmNkNy00MmFiLWE3NzUtNTYyZDkyMTliZmU0IiwidXNlcm5hbWUiOiIzOTk3MjdkNy04MGZiLTQ0MDAtYTIwMC1hMWI3MDI0YzhkM2IifQ.bA6maam-eqTdSVsLU0MR2DxwbkcbUpnN4JN1NK1G0RAdsTBCeoIyt2Ac9SlgX_A3YruxVeDkQjtphXKOIS3T1b7L0opcuIOMl5cPGx5INsz3zXX8Rf964e6ZU5uMvdJLXpXqq6MQNhu0pxeiG-cXV3N0CPs0Zgajn0Svt-f7OnugROASiM0vCdVzSzYCIw2-rIKQtjyWIrpSrvGgcxJBIB6gAtP_Q7K130PlL5UVaWBi6oCp7PzMvrDPmZY76kqs2OzwOwYU5Xd4Jm8_7cDzWoQKCytpsTerKQ1rT6Q4fLQDJmblemJADMLvGTbyZKrQf9ChtKnJTUDeZwMREkRbzw")
+    // window.localStorage.setItem("BB_USER_TOKEN", "")
 
     function getDefaultBudget(Token) {
                 // make API Call
@@ -167,7 +167,7 @@ function DefaultBudget() {
                         <Stack>
                             <BudgetTitle name={Budget.BudgetName} amount={Budget.BudgetAmountUsed} max={Budget.BudgetAmountTotal}/>
                         </Stack>
-                        <hr style={{color: 'black', width: '100px'}} />
+                        <hr style={{color: 'black', width: '100%', border: '1px solid black'}} />
                         <div style={{
                             display: "grid",
                             gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
@@ -177,13 +177,13 @@ function DefaultBudget() {
                             {Budget.Categories.map((Category, index) => {
                                 // console.log(Category)
                                 return(
-                                    <CategoryCard key={index} index={index} cat={Category} categoryid={Category.CategoryID} budget={Budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
+                                    <CategoryCard key={index} index={index} setDefaultBudget={setDefaultBudget} cat={Category} categoryid={Category.CategoryID} budget={Budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
                                 )
                             })}
                         </div>
                         <Stack>
                             <Container className="mt-3">
-                                <Button href={EditBudgetLink}>Edit Budget</Button>
+                                <Button variant="secondary" href={EditBudgetLink}>Edit Budget</Button>
                             </Container>
                             
                         </Stack>

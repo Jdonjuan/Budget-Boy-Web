@@ -1,15 +1,17 @@
 import { Button, Form, Modal, Card } from "react-bootstrap";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { currencyFormatter } from "./Utils";
 
-export default function AddExpenseModal({ show, handleClose, budget, passedCat, categoryid, amountused, categoryName, index}) {
+export default function AddExpenseModal({ show, handleClose, budget, passedCat, categoryid, setDefaultBudget, amountused, categoryName, index}) {
     // console.log("Show: ",show)
     // console.log("handle close: ", handleClose)
     const amountRef = useRef();
     const expenseNameRef = useRef();
+    const [disabled, setDisabled] = useState(false);
 
     function handleSubmit(e) {
         e.preventDefault()
+        setDisabled(true)
         // initialize new amount
         const newAmountUsed =  (parseFloat(amountused) + parseFloat(amountRef.current.value)).toString()
         // console.log("new amount:", newAmountUsed)
@@ -27,7 +29,7 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
 
         // add expensesObj to Expenses list
         if (passedCat.ExpensesList) {
-            passedCat.ExpensesList.push(expenseObj);
+            passedCat.ExpensesList.unshift(expenseObj);
         }
         else {
             passedCat.ExpensesList = [expenseObj]
@@ -95,6 +97,10 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
                 
                 // add updated category to list
                 body.Categories.push(catobj)
+
+                //update local properties
+                cat.CategoryAmountUsed = newAmountUsed;
+
             }
             else{
                 //compose new cat object
@@ -152,6 +158,7 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
             const Unauthorized = '{"message":"Unauthorized"}'
             if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
                 // console.log("redirect to sign-in")
+                setDisabled(false);
                 window.location.replace(loginURL);
             }
             else {
@@ -160,7 +167,11 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
                 
                 if (result === "Update-Budget-Lambda completed successfully") {
                     console.log("you can now reload")
-                    window.location.reload()
+                    setDisabled(false);
+                    let updatedDefaultBudget = {...budget, BudgetAmountUsed: newBudgetAmountUsed}
+                    setDefaultBudget(JSON.stringify(updatedDefaultBudget))
+                    window.localStorage.setItem('DefaultBudget', JSON.stringify(updatedDefaultBudget));
+                    // window.location.reload()
                     handleClose()
                 }
             }
@@ -176,12 +187,12 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
             <>
                 {passedCat.ExpensesList?.map((expense, i) => {
                     return (
-                    <Card key={i}>
+                    <Card key={i} >
                         <Card.Body>
 
                             <div className="d-flex justify-content-between align-items-baseline ">
-                                <div className="me-1">{expense.expenseName}</div>
-                                <div >{currencyFormatter.format(expense.expenseAmount)}</div>
+                                <div className="me-1 ">{expense.expenseName}</div>
+                                <div className="me-1">{currencyFormatter.format(expense.expenseAmount)}</div>
                                 <div >{expense.expenseDate}</div>
                             </div>
                             
@@ -194,7 +205,7 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
         )
     }
     return (
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal show={show} onHide={handleClose} centered disabled={disabled}>
             <Form onSubmit={handleSubmit}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Expense for {passedCat.CategoryName}</Modal.Title>
@@ -212,7 +223,7 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
                         </Form.Text>
                     </Form.Group>
                     <div className="d-flex justify-content-end">
-                        <Button variant="primary" type="submit">Submit</Button>
+                        <Button variant="primary" type="submit" disabled={disabled}>{disabled? "Loading..." : "Submit"}</Button>
                     </div>
                 </Modal.Body>
             </Form>
