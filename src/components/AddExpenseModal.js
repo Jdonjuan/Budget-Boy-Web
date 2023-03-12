@@ -5,6 +5,7 @@ import { currencyFormatter } from "./Utils";
 export default function AddExpenseModal({ show, handleClose, budget, passedCat, categoryid, setDefaultBudget, amountused, categoryName, index}) {
     // console.log("Show: ",show)
     // console.log("handle close: ", handleClose)
+    const formRef = useRef();
     const amountRef = useRef();
     const expenseNameRef = useRef();
     const [disabled, setDisabled] = useState(false);
@@ -162,10 +163,10 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
                 window.location.replace(loginURL);
             }
             else {
-                console.log("Success:", result);
                 console.log("body sent", body)
                 
                 if (result === "Update-Budget-Lambda completed successfully") {
+                    console.log("Success:", result);
                     console.log("you can now reload")
                     setDisabled(false);
                     let updatedDefaultBudget = {...budget, BudgetAmountUsed: newBudgetAmountUsed}
@@ -174,8 +175,26 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
                     // window.location.reload()
                     handleClose()
                 }
+                else {
+                    console.log("Failure:", result);
+                    setDisabled(false);
+                    let updatedDefaultBudget = {...budget, BudgetAmountUsed: newBudgetAmountUsed}
+                    setDefaultBudget(JSON.stringify(updatedDefaultBudget))
+                    window.localStorage.setItem('DefaultBudget', JSON.stringify(updatedDefaultBudget));
+                    // window.location.reload()
+                    handleClose()
+                }
             }
-        }).catch(error => console.log('error', error));
+        }).catch(error => {
+            console.log('error', error);
+            console.log("There was an Error:", error);
+            setDisabled(false);
+            let updatedDefaultBudget = {...budget, BudgetAmountUsed: newBudgetAmountUsed}
+            setDefaultBudget(JSON.stringify(updatedDefaultBudget))
+            window.localStorage.setItem('DefaultBudget', JSON.stringify(updatedDefaultBudget));
+            // window.location.reload()
+            handleClose()
+        });
             
         
         // reload page
@@ -204,20 +223,23 @@ export default function AddExpenseModal({ show, handleClose, budget, passedCat, 
             
         )
     }
+
+
+
     return (
-        <Modal show={show} onHide={handleClose} centered disabled={disabled}>
-            <Form onSubmit={handleSubmit}>
-                <Modal.Header closeButton>
+        <Modal show={show} onHide={handleClose} centered backdrop={disabled? 'static' : true}>
+            <Form onSubmit={handleSubmit} ref={formRef} >
+                <Modal.Header className="bg-primary bg-opacity-75 text-white" closeButton={!disabled}>
                     <Modal.Title>Add Expense for {passedCat.CategoryName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Group className="mb-3" controlId="amount">
+                    <Form.Group className="mb-3" controlId="amount" >
                         <Form.Label>Expense Name</Form.Label>
-                        <Form.Control ref={expenseNameRef} type="text" required defaultValue={categoryName}/>
+                        <Form.Control ref={expenseNameRef} type="text" required defaultValue={categoryName} disabled={disabled}/>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="amount">
+                    <Form.Group className="mb-3" controlId="amount" >
                         <Form.Label>Amount</Form.Label>
-                        <Form.Control ref={amountRef} type="number" required  step={0.01}/>
+                        <Form.Control ref={amountRef} type="number" required  step={0.01} disabled={disabled}/>
                         <Form.Text className="text-muted">
                             e.g. {budget.CurrencySymbol || "$"}13.99
                         </Form.Text>

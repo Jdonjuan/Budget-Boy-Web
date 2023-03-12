@@ -9,7 +9,7 @@ export default function BudgetTitle ({ categoryid, name, amount, max, budget, in
         // console.log("Amount is: ", amount);
         // console.log("Max is: ", max)
         // console.log("Amount > Max?: ", (parseFloat(amount) > parseFloat(max)))
-        classNames.push("bg-danger")
+        classNames.push("bg-danger bg-opacity-25")
     }
     
 
@@ -17,7 +17,7 @@ export default function BudgetTitle ({ categoryid, name, amount, max, budget, in
         <>
         <Card className={classNames.join(" ")} >
             <Card.Body>
-                <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
+                <Card.Title className="d-flex justify-content-between align-items-baseline mb-3">
                     <div className="fs-6">{name}</div>
                     <div className="d-flex align-items-baseline fs-6 text-muted">
                         {currencyFormatter.format(amount)}/{currencyFormatter.format(max)}

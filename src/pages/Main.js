@@ -18,11 +18,14 @@ function Main() {
                     <Button variant="primary" href={SignInURL}>Sign in</Button>
                 </Stack>
                 <hr style={{
-                    color: 'white'
+                    color: 'black',
+                    border: '1px solid'
                 }} />
             </header>
-            <body className="my-4">
-                <Stack >
+            <div className="my-4">
+                <Stack style={{
+                    backgroundColor: '#c3ecf8'
+                }}>
                     <h1>What is Budget Boy?</h1>
                     <p>Budget Boy is an online web app that helps you track your spending and stick to your budget!</p>
                     {/* <Container>
@@ -91,7 +94,7 @@ function Main() {
                     </Container>
                     
                 </Stack>
-            </body>
+            </div>
             <footer>
                 {/* <Stack direction="horizontal">
                     <Container>

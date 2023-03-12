@@ -8,7 +8,7 @@ export default function CategoryCard ({ categoryid, name, cat, amount, max, budg
 
     const classNames = ["border-primary"];
     if (amount > max) {
-        classNames.push("bg-danger");
+        classNames.push("bg-danger bg-opacity-25");
     }
     
 

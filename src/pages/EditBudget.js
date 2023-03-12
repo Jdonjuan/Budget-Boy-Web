@@ -14,6 +14,7 @@ function EditBudget() {
     const loginURL = SignInURL
     const defaultBudgetURL = DefaultBudgetURL
     const CreateBudgetPage = CreateBudgetURL
+    const [disabled, setDisabled] = useState(false);
     // const [Budgets, setBudgets] = useState(null)
     
 
@@ -138,6 +139,7 @@ function EditBudget() {
             }
 
             function submitChanges(){
+                setDisabled(true)
                 // initiate edited budget variable
                 var editedBudget = window.localStorage.getItem('DefaultBudget')
                 // console.log(editedBudget)
@@ -206,6 +208,7 @@ function EditBudget() {
                     catobj.IsRecurring.BOOL = cat.IsRecurring
                     catobj.Type = {}
                     catobj.Type.S = cat.Type
+                    catobj.ExpensesList = cat.ExpensesList
                     
                     // add updated category to list
                     body.Categories.push(catobj)
@@ -236,17 +239,23 @@ function EditBudget() {
                     const Unauthorized = '{"message":"Unauthorized"}'
                     if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
                         // console.log("redirect to sign-in")
+                        setDisabled(false);
                         window.location.replace(loginURL);
                     }
                     else {
                         console.log("Success: ", result);
                         console.log("Body sent: ", JSON.stringify(body));
                         if (result == "Update-Budget-Lambda completed successfully"){
-                            window.location.replace(defaultBudgetURL)
+                            setDisabled(false);
+                            window.location.replace(defaultBudgetURL);
                         }
                         // window.location.replace(defaultBudgetURL)
                     }
-                }).catch(error => console.log('error', error));
+                }).catch(error => { 
+                    console.log('error', error);
+                    setDisabled(false);
+                    window.location.replace(defaultBudgetURL);
+                });
             }
             return(
                 <Container>
@@ -259,9 +268,9 @@ function EditBudget() {
                                 // console.log(Category)
                                 
                                 return(
-                                    <Container key={index} >
+                                    <Container key={index} className="" >
                                         <Form.Group className="mb-3" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                            <hr style={{color: 'white'}} />
+                                            <hr style={{color: 'black'}} />
                                             <Form.Label className="d-flex">Category Name</Form.Label> 
                                             <Form.Control type="text" placeholder={Category.CategoryName}  defaultValue={Category.CategoryName}/>
                                         </Form.Group>
@@ -272,24 +281,27 @@ function EditBudget() {
                                         <Form.Group className="mb-6" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
                                             <Form.Check className="d-flex gap-2" type="checkbox" label="Recurring" defaultChecked={Category.IsRecurring}/>
                                         </Form.Group>
-                                        <Button className="d-flex mt-4" variant="danger" onClick={ifclicked => deleteCategory(index)}>Delete Category</Button>
-                                        <hr style={{color: 'white'}} />
+                                        <Button className="d-flex mt-4" variant="danger" onClick={ifclicked => deleteCategory(index)}>Delete Category "{Category.CategoryName}"</Button>
+                                        <hr style={{color: 'black'}} />
                                     </Container>
                                     
                                 )
                             })}
-                        <Button className="mt-3" onClick={clicked => addCategory()}>Add Category</Button>
-                        <hr style={{color: 'white'}} />
+                        <Button className="mt-2 mb-2" onClick={clicked => addCategory()}>Add Category</Button>
+                        <hr style={{color: 'black'}} />
                         <Stack className="mt-3" direction="horizontal" gap="4">
                             <Button className="mr-3 ms-auto" variant="secondary" type="cancel" href={defaultBudgetURL}>
                                 Cancel
                             </Button>
-                            <Button variant="primary"  onClick={clicked => submitChanges()}>
-                                Submit
+                            <Button variant="primary" disabled={disabled}  onClick={clicked => submitChanges()}>
+                                {disabled? "Loading..." : "Submit"}
                             </Button>
                         </Stack>
                         
                     </Form>
+
+                    <h3 className="mt-5" >Preview</h3>
+                    
                     <hr style={{color: 'white'}} />
                     
                     <div style={{
@@ -319,7 +331,7 @@ function EditBudget() {
             </Container>
             {renderForm(DefaultBudget)}
             <hr style={{
-                    color: 'white'
+                    color: 'black'
                 }} />
         </Container>
     )

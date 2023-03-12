@@ -7,7 +7,7 @@ export default function CategoryCard ({ categoryid, name, amount, max, budget, i
 
     const classNames = []
     if (amount > max) {
-        classNames.push("bg-danger")
+        classNames.push("bg-danger bg-opacity-10")
     }
     
 
@@ -15,17 +15,17 @@ export default function CategoryCard ({ categoryid, name, amount, max, budget, i
         <>
         <Card className={classNames.join(" ")} onClick={() => setModalShow(true)}>
             <Card.Body>
-                <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
+                <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-1">
                     <div className="me-2">{name}</div>
-                    <div className="fs-6">{currencyFormatter.format(max - amount)}</div>
                     <div className="d-flex align-items-baseline fs-6 text-muted">
                         {currencyFormatter.format(amount)}  
                         <span className="text-muted fs-6 ms-1">
                         / {currencyFormatter.format(max)}
                         </span>
                     </div>
+                    <div className="fs-6">{currencyFormatter.format(max - amount)}</div>
                 </Card.Title>
-                <ProgressBar variant={getProgressBarVariant(amount, max)} min={0} max={max} now={amount} />
+                {/* <ProgressBar variant={getProgressBarVariant(amount, max)} min={0} max={max} now={amount} /> */}
             </Card.Body>
         </Card>
         </>
