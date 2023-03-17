@@ -115,11 +115,12 @@ function EditBudget() {
                     CategoryAmountUsed: "0",
                     CategoryID: newGuid,
                     CategoryName: "",
-                    CategoryPositionID: "",
+                    CategoryPositionID: `${budget.Categories.length}`,
                     IsRecurring: false,
                     PK: PK,
                     SK: SK,
-                    Type: "Category"
+                    Type: "Category",
+                    ExpensesList: []
 
                 }
                 // append category to budget
@@ -249,7 +250,9 @@ function EditBudget() {
                             setDisabled(false);
                             window.location.replace(defaultBudgetURL);
                         }
-                        // window.location.replace(defaultBudgetURL)
+                        else {
+                            window.location.replace(defaultBudgetURL);
+                        }
                     }
                 }).catch(error => { 
                     console.log('error', error);
@@ -257,6 +260,10 @@ function EditBudget() {
                     window.location.replace(defaultBudgetURL);
                 });
             }
+
+            budget.Categories.sort((a, b) => {
+                return Number(a.CategoryPositionID) - Number(b.CategoryPositionID)
+            });
             return(
                 <Container>
                     <Form>
@@ -293,8 +300,8 @@ function EditBudget() {
                             <Button className="mr-3 ms-auto" variant="secondary" type="cancel" href={defaultBudgetURL}>
                                 Cancel
                             </Button>
-                            <Button variant="primary" disabled={disabled}  onClick={clicked => submitChanges()}>
-                                {disabled? "Loading..." : "Submit"}
+                            <Button variant="success" disabled={disabled}  onClick={clicked => submitChanges()}>
+                                {disabled? "Loading..." : "Save"}
                             </Button>
                         </Stack>
                         

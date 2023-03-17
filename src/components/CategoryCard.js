@@ -19,7 +19,7 @@ export default function CategoryCard ({ categoryid, name, cat, amount, max, budg
                 <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
                     <div className="me-2">{name}</div>
                     <div className="d-flex align-items-baseline fs-6 text-muted">
-                        {currencyFormatter.format(amount)}  
+                        {amount >= 0 ? currencyFormatter.format(amount) : 0}  
                         <span className="text-muted fs-6 ms-1">
                         / {currencyFormatter.format(max)}
                         </span>
@@ -36,7 +36,7 @@ export default function CategoryCard ({ categoryid, name, cat, amount, max, budg
 
 function getProgressBarVariant(amount, max) {
     const ratio = amount / max
-    if (ratio < 0.5) return "primary"
+    if (ratio < 0.5) return "success"
     if (ratio < 0.75) return "warning"
     return "danger"
 }

@@ -161,11 +161,14 @@ function DefaultBudget() {
             // console.log(BudgetResponse)
             var Budget = JSON.parse(defaultBudget)
             window.localStorage.setItem('DefaultBudget', defaultBudget);
+            Budget.Categories.sort((a, b) => {
+                return Number(a.CategoryPositionID) - Number(b.CategoryPositionID)
+            });
             return(
                 <Container>
                         {/* <p>{BudgetResponse}</p> */}
                         <Stack>
-                            <BudgetTitle name={Budget.BudgetName} amount={Budget.BudgetAmountUsed} max={Budget.BudgetAmountTotal}/>
+                            <BudgetTitle name={Budget.BudgetName} amount={Number(Budget.BudgetAmountUsed)} max={Number(Budget.BudgetAmountTotal)}/>
                         </Stack>
                         <hr style={{color: 'black', width: '100%', border: '1px solid black'}} />
                         <div style={{
