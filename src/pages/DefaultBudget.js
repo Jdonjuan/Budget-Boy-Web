@@ -266,6 +266,9 @@ function DefaultBudget() {
             // 1 bar chart for each category. Each chart will display amount on Y and Month on X. with Name of the Category on Top of the chart
             // one overall budget chart that adds up all the category expenses.
             let budget = JSON.parse(defaultBudget);
+            budget.CurrentCategories.sort((a, b) => {
+                return Number(a.CategoryPositionID) - Number(b.CategoryPositionID)
+            });
             let states = budget.CurrentCategories.map(cat => {
                 let relatedHistItems = budget.CategoryHistory.filter(histItem => histItem.CategoryID == cat.CategoryID);
                 // relatedHistItems = relatedHistItems.sort(() => )
