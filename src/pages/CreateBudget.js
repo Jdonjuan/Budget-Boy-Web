@@ -45,7 +45,7 @@ function CreateBudget() {
             {
                 PK: `UEMAIL#${UEMAIL}`,
                 SK: `BID#${BID}`,
-                BudgetAmountTotal: "",
+                BudgetAmountTotal: "100",
                 BudgetAmountUsed: "0",
                 BudgetID: BID,
                 BudgetName: "My Budget",
@@ -62,13 +62,14 @@ function CreateBudget() {
                         PK: `CATBID#${BID}`,
                         SK: `CADID#${CID}`,
                         BudgetID: BID,
-                        CategoryAmountTotal: "",
+                        CategoryAmountTotal: "100",
                         CategoryAmountUsed: "",
                         CategoryID: CID,
-                        CategoryName: "",
-                        CategoryPositionID: "",
+                        CategoryName: "New Category",
+                        CategoryPositionID: "0",
                         IsRecurring: false,
-                        Type: "Category"
+                        Type: "Category",
+                        ExpensesList: []
                     }
                 ]
     
@@ -139,6 +140,7 @@ function CreateBudget() {
                 catobj.IsRecurring.BOOL = cat.IsRecurring
                 catobj.Type = {}
                 catobj.Type.S = cat.Type
+                catobj.ExpensesList = cat.ExpensesList
                 
                 // add category to list
                 body.Categories.push(catobj)

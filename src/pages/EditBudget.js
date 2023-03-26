@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Stack, Form } from "react-bootstrap";
+import { Button, Container, Stack, Form, Card } from "react-bootstrap";
 import BudgetCard from "../components/BudgetCard";
 import BB_Nav from "../components/Navbar";
 import CategoryForm from "../components/CategoryForm";
@@ -97,6 +97,10 @@ function EditBudget() {
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                     }
                     
+                }
+                else if (id === "position") {
+                    budget.Categories[index].CategoryPositionID = occuranceValue;
+                    window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
                 
 
@@ -275,32 +279,46 @@ function EditBudget() {
                                 // console.log(Category)
                                 
                                 return(
-                                    <Container key={index} className="" >
-                                        <Form.Group className="mb-3" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                            <hr style={{color: 'black'}} />
+                                    <Card key={index} className="border-primary fw-normal mb-3 p-3" >
+                                        <Form.Group className="" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
+                                            {/* <hr style={{color: 'black'}} /> */}
                                             <Form.Label className="d-flex">Category Name</Form.Label> 
                                             <Form.Control type="text" placeholder={Category.CategoryName}  defaultValue={Category.CategoryName}/>
                                         </Form.Group>
-                                        <Form.Group className="mb-3" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
+                                        <Form.Text className="text-muted d-flex mb-3">e.g. Groceries
+                                        </Form.Text>
+                                        <Form.Group className="" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
                                             <Form.Label className="d-flex">Max</Form.Label>
                                             <Form.Control type="text" placeholder={Category.CategoryAmountTotal}  defaultValue={Category.CategoryAmountTotal}/>
                                         </Form.Group>
-                                        <Form.Group className="mb-6" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
+                                        <Form.Text className="text-muted d-flex mb-3" >
+                                            e.g. {budget.CurrencySymbol || "$"}500
+                                        </Form.Text>
+                                        <Form.Group className="" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
                                             <Form.Check className="d-flex gap-2" type="checkbox" label="Recurring" defaultChecked={Category.IsRecurring}/>
                                         </Form.Group>
-                                        <Button className="d-flex mt-4" variant="danger" onClick={ifclicked => deleteCategory(index)}>Delete Category "{Category.CategoryName}"</Button>
-                                        <hr style={{color: 'black'}} />
-                                    </Container>
+                                        <Form.Text className="text-muted d-flex mb-3">If checked, the amount used will be the same as the max and will not clear out at the end of the month.
+                                        </Form.Text>
+                                        <Form.Group className="" controlId="position" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
+                                            <Form.Label className="d-flex">Position</Form.Label>
+                                            <Form.Control type="text" placeholder={Category.CategoryPositionID}  defaultValue={Category.CategoryPositionID}/>
+                                        </Form.Group>
+                                        <Form.Text className="text-muted d-flex mb-6">
+                                            The category with the lowest postion number appears first. e.g. 0
+                                        </Form.Text>
+                                        <Button className="mt-4" variant="danger" onClick={ifclicked => deleteCategory(index)}>Delete Category</Button>
+                                        {/* <hr style={{color: 'black'}} /> */}
+                                    </Card>
                                     
                                 )
                             })}
                         <Button className="mt-2 mb-2" onClick={clicked => addCategory()}>Add Category</Button>
                         <hr style={{color: 'black'}} />
-                        <Stack className="mt-3" direction="horizontal" gap="4">
-                            <Button className="mr-3 ms-auto" variant="secondary" type="cancel" href={defaultBudgetURL}>
+                        <Stack className="mt-3" direction="horizontal" gap="5">
+                            <Button className="px-3 ms-auto" variant="secondary" type="cancel" href={defaultBudgetURL}>
                                 Cancel
                             </Button>
-                            <Button variant="success" disabled={disabled}  onClick={clicked => submitChanges()}>
+                            <Button className="px-4" variant="success" disabled={disabled}  onClick={clicked => submitChanges()}>
                                 {disabled? "Loading..." : "Save"}
                             </Button>
                         </Stack>

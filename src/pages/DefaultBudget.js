@@ -26,7 +26,7 @@ function DefaultBudget() {
     window.localStorage.setItem('EMAIL', null);
     window.localStorage.setItem('History', null);
 
-    // window.localStorage.setItem("BB_USER_TOKEN", "")
+    window.localStorage.setItem("BB_USER_TOKEN", "");
 
     function getDefaultBudget(Token) {
         // make API Call
@@ -266,19 +266,66 @@ function DefaultBudget() {
             // 1 bar chart for each category. Each chart will display amount on Y and Month on X. with Name of the Category on Top of the chart
             // one overall budget chart that adds up all the category expenses.
             let budget = JSON.parse(defaultBudget);
+            
             budget.CurrentCategories.sort((a, b) => {
                 return Number(a.CategoryPositionID) - Number(b.CategoryPositionID)
             });
+            
+            // add overall budget Category
+            let overallCat = {
+                CategoryID: 'budget',
+                CategoryName: budget.BudgetName,
+                CategoryAmountTotal: budget.BudgetAmountTotal,
+                CategoryAmountUsed: budget.BudgetAmountUsed
+            }
+
+            budget.CurrentCategories.unshift(overallCat);
+
+            // add related history items for the overall budget category
+            // for each hist item in the same month, add up their amount used and create a new history item with the amount and the CategoryID of 'budget'
+            
+            // get list of available months
+            let availableMonths = [];
+            budget.CategoryHistory.forEach(hist => {
+                let month = new Date(hist.Timestamp.slice(0, 10)).toDateString().slice(4, 7);
+                if ( !(availableMonths.includes(month)) ) {
+                    availableMonths.push(month);
+                }
+            });
+            
+            // foreach available month, walk through the hist items and add up their amount used. Create new item with acquired info. 
+            let overallHistItems = []
+            availableMonths.forEach( month => {
+                let monthTotal = 0;
+                let TS;
+                budget.CategoryHistory.forEach(histItem => {
+                    let histMonth = new Date(histItem.Timestamp.slice(0, 10)).toDateString().slice(4, 7);
+                    if ( histMonth == month ) {
+                        monthTotal += parseFloat(histItem.CategoryAmountUsed);
+                        TS = histItem.Timestamp;
+                    }
+                });
+                let newHistItem = {
+                    CategoryID: "budget",
+                    CategoryAmountUsed: monthTotal,
+                    Timestamp: TS
+                }
+                overallHistItems.push(newHistItem);
+            });
+            
+            // add overall hist items to the Category History array
+            budget.CategoryHistory = budget.CategoryHistory.concat(overallHistItems);
+
             let states = budget.CurrentCategories.map(cat => {
                 let relatedHistItems = budget.CategoryHistory.filter(histItem => histItem.CategoryID == cat.CategoryID);
                 // relatedHistItems = relatedHistItems.sort(() => )
-                let newCat = {...cat, Timestamp: 'This Month'}
+                let newCat = {...cat, Timestamp: new Date().toISOString() }
                 relatedHistItems.push(newCat);
 
                 
                 //transform data to 
                 let newState = {
-                    labels: relatedHistItems.map(item => item.Timestamp.slice(0, 10)),
+                    labels: relatedHistItems.map(item => new Date(item.Timestamp.slice(0, 10)).toDateString().slice(4, 7) ),
                     datasets: [
                         {
                             label: `${cat.CategoryName} | Max: ${currencyFormatter.format(cat.CategoryAmountTotal)}`,
@@ -369,6 +416,8 @@ function DefaultBudget() {
             <hr style={{
                     color: 'black'
                 }} />
+            <h2 className="mb-0">Reports</h2>
+            <p>Last 12 months</p>
             {RenderReportData(defaultBudget)}
         </Container>
     )

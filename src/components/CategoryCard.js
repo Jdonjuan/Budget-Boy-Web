@@ -16,16 +16,17 @@ export default function CategoryCard ({ categoryid, name, cat, amount, max, budg
         <>
         <Card className={classNames.join(" ")} onClick={() => setModalShow(true)}>
             <Card.Body>
-                <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-3">
+                <Card.Title className="d-flex justify-content-between align-items-baseline fw-normal mb-0">
                     <div className="me-2">{name}</div>
-                    <div className="d-flex align-items-baseline fs-6 text-muted">
+                    <div className="d-flex align-items-baseline fs-6">
                         {amount >= 0 ? currencyFormatter.format(amount) : 0}  
-                        <span className="text-muted fs-6 ms-1">
+                        <span className="fs-6 ms-1">
                         / {currencyFormatter.format(max)}
                         </span>
                     </div>
-                    <div className="fs-6">{currencyFormatter.format(max - amount)}</div>
+                    
                 </Card.Title>
+                <div className="text-muted fs-6">{currencyFormatter.format(max - amount)} {amount > max ? "over" : "left"}</div>
                 <ProgressBar variant={getProgressBarVariant(amount, max)} min={0} max={max} now={amount} />
             </Card.Body>
         </Card>
