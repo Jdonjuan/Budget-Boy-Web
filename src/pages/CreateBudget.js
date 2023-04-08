@@ -5,14 +5,12 @@ import CategoryForm from "../components/CategoryForm";
 import { v4 as uuidV4 } from 'uuid';
 import { CognitoIdentityProvider, CognitoIdentityProviderClient, GetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { getDefaultNormalizer } from "@testing-library/react";
+import { EditBudgetURL, CreateBudgetURL, SignInURL, DefaultBudgetURL} from "../components/Vars";
 
 // try api call to get budgets (or check if stored token exists/is valid), if get budgets works, get categories for default budget and display them to the screen
 // if get budgets doesn't work, redirect to cognito sign in page. 
 
 function CreateBudget() {
-    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
-    const defaultBudgetURL = "https://budgetboy.net/DefaultBudget"
-    const editBudgetURL = "https://budgetboy.net/EditBudget"
     // const [Budgets, setBudgets] = useState(null)
     // const CreateBudgetPage = "http://localhost:3000/CreateBudget"
 
@@ -174,11 +172,11 @@ function CreateBudget() {
                 const Unauthorized = '{"message":"Unauthorized"}'
                 if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
                     console.log("redirect to sign-in")
-                    window.location.replace(loginURL);
+                    window.location.replace(SignInURL);
                 }
                 else {
                     console.log("Success: ", result);
-                    window.location.replace(editBudgetURL)
+                    window.location.replace(EditBudgetURL)
                 }
             }).catch(error => console.log('error', error));
             // redirect to EditBudgetPage
@@ -188,7 +186,11 @@ function CreateBudget() {
 
     getEmail()
 
-
+    return (
+        <>
+            <p>Creating Budget...</p>
+        </>
+    )
     // function checkEmail() {
     //     if (UEMAIL === null || UEMAIL === 'null'){
     //         return(false)

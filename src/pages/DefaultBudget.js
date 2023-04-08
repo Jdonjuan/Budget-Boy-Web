@@ -26,7 +26,7 @@ function DefaultBudget() {
     window.localStorage.setItem('EMAIL', null);
     window.localStorage.setItem('History', null);
 
-    window.localStorage.setItem("BB_USER_TOKEN", "");
+    // window.localStorage.setItem("BB_USER_TOKEN", "");
 
     function getDefaultBudget(Token) {
         // make API Call
@@ -63,8 +63,16 @@ function DefaultBudget() {
                     return JSON.stringify(result)
                 })
             }
+            else if (JSON.stringify(result) == `{"message":"Internal server error"}`) {
+                
+                console.log("an error occured", result)
+                setDefaultBudget(message => {
+                    return JSON.stringify({error: "error"})
+                })
+            }
             else {
-                // console.log("Budgets: ", result);
+                console.log("Budgets: ", result);
+                console.log("string", JSON.stringify(result));
                 // get default budget ID
                 var DefaultBudgetID = null;
                 var DBudget = null;
@@ -219,6 +227,13 @@ function DefaultBudget() {
             console.log("Empty Budget: ", defaultBudget)
             // window.location.replace(CreateBudgetPage);
         }
+        else if (BudgetResponse == `{"error":"error"}` || defaultBudget == `{"error":"error"}`) {
+            return (
+                <>
+                    <h5>Something went wrong</h5>
+                </>
+            )
+        }
         else {
             // console.log(BudgetResponse)
             let Budget = JSON.parse(defaultBudget);
@@ -260,6 +275,13 @@ function DefaultBudget() {
     function RenderReportData(BudgetResponse) {
         if (BudgetResponse === null) {
             return "Loading Reports..."
+        }
+        else if (BudgetResponse == `{"error":"error"}` || defaultBudget == `{"error":"error"}`) {
+            return (
+                <>
+                    <h5>Something went wrong</h5>
+                </>
+            )
         }
         else {
             // Move Get Report Data API Call to the Get Categories Call! THis should reduce rerenders. 

@@ -31,9 +31,9 @@ function BB_Nav() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href={DefaultBudgetLink}>My Budget</Nav.Link>
-            {/* <Nav.Link href={AccountLink}>Account</Nav.Link> */}
+            <Nav.Link href={AccountLink}>Account</Nav.Link>
           </Nav>
-          <Button onClick={function logoutUser() {
+          <Button className='mt-3 mb-3' onClick={function logoutUser() {
                     console.log("user has been logged out")
                     window.localStorage.setItem('BB_USER_TOKEN', null);
                     window.localStorage.setItem('DefaultBudget', null);
