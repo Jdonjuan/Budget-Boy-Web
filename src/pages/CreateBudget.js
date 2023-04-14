@@ -61,7 +61,7 @@ function CreateBudget() {
                         SK: `CADID#${CID}`,
                         BudgetID: BID,
                         CategoryAmountTotal: "100",
-                        CategoryAmountUsed: "",
+                        CategoryAmountUsed: "0",
                         CategoryID: CID,
                         CategoryName: "New Category",
                         CategoryPositionID: "0",

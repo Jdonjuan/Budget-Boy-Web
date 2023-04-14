@@ -5,7 +5,7 @@ import { currencyFormatter } from "./Utils";
 export default function BudgetTitle ({ categoryid, name, amount, max, budget, index}) {
 
     const classNames = ["rounded-pill border-primary"]
-    if (parseFloat(amount) > parseFloat(max)) {
+    if (Number(amount) > Number(max)) {
         // console.log("Amount is: ", amount);
         // console.log("Max is: ", max)
         // console.log("Amount > Max?: ", (parseFloat(amount) > parseFloat(max)))
