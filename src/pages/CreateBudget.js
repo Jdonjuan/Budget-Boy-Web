@@ -34,6 +34,11 @@ function CreateBudget() {
 
         if (UEMAIL !== null || UEMAIL !== 'null'){
             console.log("Creating a budget...")
+            // Get Browser's time and convert it to the right Cron
+            const d = new Date();
+            d.setHours(23, 55, 0);
+            const cronHour = d.getUTCHours();
+            const cronTime = `55 ${cronHour} L * ? *`;
             // Create Budget's UUID
             const BID = uuidV4()
             // Create Empty Category UUID
@@ -54,7 +59,7 @@ function CreateBudget() {
                 NextCycleStartDate: "",
                 TimeZone: "MDT",
                 Type: "Budget",
-                MonthlyCron: "55 17 L * ? *",
+                MonthlyCron: cronTime,
                 Categories: [
                     {
                         PK: `CATBID#${BID}`,
