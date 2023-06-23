@@ -1,8 +1,23 @@
-footer {
+/* footer {
     position: fixed;
     bottom: 0;
-}
+} */
 
 /* Container {
     background-color: black;
 } */
+
+.body-text {
+    text-align: center;
+    margin: 0 5%;
+}
+
+p, li, h2{
+    text-align: left;
+    /* hyphens: auto; */
+    word-wrap: break-word;
+}
+
+.body-section {
+    padding-bottom: 1em;
+}
