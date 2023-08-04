@@ -4,15 +4,16 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import logo from "../assets/BudgetBoyLogo.png"
+import { AccountURL, DefaultBudgetURL, MyBudgetsURL, SignInURL, SignOutURL } from './Vars';
 
 function BB_Nav() {
-    const DefaultBudgetLink = "https://budgetboy.net/DefaultBudget"
-    const signinLink =  "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
-    const SignOutLink = "https://budgetboy.auth.us-east-1.amazoncognito.com/logout?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
-    const MyBudgetsLink = "https://budgetboy.net/MyBudgets"
-    const AccountLink = "https://budgetboy.net/Account"
+    const DefaultBudgetLink = DefaultBudgetURL
+    const signinLink =  SignInURL
+    const SignOutLink = SignOutURL
+    const MyBudgetsLink = MyBudgetsURL
+    const AccountLink = AccountURL
   return (
-    <Navbar bg="none" expand="lg" variant='dark'>
+    <Navbar bg="none" expand="lg" variant='light'>
       <Container>
         <Navbar.Brand href={DefaultBudgetLink}>
         <img
@@ -30,9 +31,9 @@ function BB_Nav() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href={DefaultBudgetLink}>My Budget</Nav.Link>
-            {/* <Nav.Link href={AccountLink}>Account</Nav.Link> */}
+            <Nav.Link href={AccountLink}>Account</Nav.Link>
           </Nav>
-          <Button onClick={function logoutUser() {
+          <Button className='mt-3 mb-3' onClick={function logoutUser() {
                     console.log("user has been logged out")
                     window.localStorage.setItem('BB_USER_TOKEN', null);
                     window.localStorage.setItem('DefaultBudget', null);

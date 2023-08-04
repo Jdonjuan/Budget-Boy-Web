@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Button, Container, Stack } from "react-bootstrap";
 import BudgetCard from "../components/BudgetCard";
 import BB_Nav from "../components/Navbar";
+import { CreateBudgetURL, SignInURL } from "../components/Vars";
 
 // try api call to get budgets (or check if stored token exists/is valid), if get budgets works, get categories for default budget and display them to the screen
 // if get budgets doesn't work, redirect to cognito sign in page. 
 
 function MyBudgets() {
-    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
+    const loginURL = SignInURL
     const [Budgets, setBudgets] = useState(null)
-    const CreateBudgetPage = "https://budgetboy.net/CreateBudget"
+    const CreateBudgetPage = CreateBudgetURL
 
     function getBudgets(Token) {
                 // make API Call

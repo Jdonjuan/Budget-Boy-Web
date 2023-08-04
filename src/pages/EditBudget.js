@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Stack, Form } from "react-bootstrap";
+import { Button, Container, Stack, Form, Card } from "react-bootstrap";
 import BudgetCard from "../components/BudgetCard";
 import BB_Nav from "../components/Navbar";
 import CategoryForm from "../components/CategoryForm";
 import { v4 as uuidV4 } from 'uuid';
+import { CreateBudgetURL, SignInURL } from "../components/Vars";
+import { DefaultBudgetURL } from "../components/Vars";
 
 // try api call to get budgets (or check if stored token exists/is valid), if get budgets works, get categories for default budget and display them to the screen
 // if get budgets doesn't work, redirect to cognito sign in page. 
 
 function EditBudget() {
-    const loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=https://budgetboy.net/DefaultBudget"
-    const defaultBudgetURL = "https://budgetboy.net/DefaultBudget"
-    const CreateBudgetPage = "https://budgetboy.net/CreateBudget"
+    const loginURL = SignInURL
+    const defaultBudgetURL = DefaultBudgetURL
+    const CreateBudgetPage = CreateBudgetURL
+    const [disabled, setDisabled] = useState(false);
     // const [Budgets, setBudgets] = useState(null)
     
 
@@ -23,6 +26,7 @@ function EditBudget() {
     var DefaultBudget = window.localStorage.getItem('DefaultBudget')
     // console.log(DefaultBudget)
     // const [addCategory, setAddCategory] = useState(0)
+    const [bTotal, setBTotal] = useState(`${JSON.parse(DefaultBudget).BudgetAmountTotal}`);
     
 
     function renderForm(BudgetResponse) {
@@ -41,52 +45,66 @@ function EditBudget() {
             
             function handleBNameChange(value) {
                 budget.BudgetName = value
-                console.log("new budget: ", budget)
+                // console.log("new budget: ", budget)
                 window.localStorage.setItem('DefaultBudget', JSON.stringify(budget) );
             }
 
             function handleChangeInput(index, occuranceValue, id){
-                console.log(index, occuranceValue, id)
+                // console.log(index, occuranceValue, id)
                 // go to category index, swap out the element with the updated element
-                console.log(budget.Categories[index])
+                // console.log(budget.Categories[index])
                 if (id === "cname"){
                     budget.Categories[index].CategoryName = occuranceValue
-                    console.log("new budget: ", budget)
+                    // console.log("new budget: ", budget)
                     window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
                 else if (id === "max") {
                     budget.Categories[index].CategoryAmountTotal = occuranceValue
                     var newBudgetMax = 0
                     budget.Categories.map((Category, index) => {
-                        console.log(parseFloat(Category.CategoryAmountTotal))
-                        newBudgetMax += parseFloat(Category.CategoryAmountTotal)
+                        // console.log(typeof Category.CategoryAmountTotal)
+                        if (Category.CategoryAmountTotal != "") {
+                            newBudgetMax += parseFloat(Category.CategoryAmountTotal);
+                        }
                     })
-                    console.log(newBudgetMax)
-                    budget.BudgetAmountTotal = newBudgetMax.toString()
-                    console.log("new budget: ", budget)
+                    // console.log(newBudgetMax)
+                    budget.BudgetAmountTotal = newBudgetMax.toString();
+                    setBTotal(newBudgetMax);
+                    // console.log("new budget: ", budget)
                     window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
                 else if (id === "recurring") {
                     budget.Categories[index].IsRecurring = occuranceValue
                     if (occuranceValue === true){
-                        console.log("Recurring is TRUE: ", occuranceValue)
+                        // console.log("Recurring is TRUE: ", occuranceValue)
                         budget.Categories[index].CategoryAmountUsed = budget.Categories[index].CategoryAmountTotal
                         var newBudgetMax = 0
+                        var RecurringAmounts = 0
                         budget.Categories.map((Category, index) => {
-                            console.log(parseFloat(Category.CategoryAmountTotal))
+                            // console.log(parseFloat(Category.CategoryAmountTotal))
                             newBudgetMax += parseFloat(Category.CategoryAmountTotal)
+                            if (Category.IsRecurring === true){
+                                RecurringAmounts += parseFloat(Category.CategoryAmountTotal)
+                            }
                         })
-                        console.log(newBudgetMax)
+                        // console.log(newBudgetMax)
                         budget.BudgetAmountTotal = newBudgetMax.toString()
-                        console.log("new budget: ", budget)
+                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) + parseFloat(budget.Categories[index].CategoryAmountTotal)).toString()
+                        // console.log("new budget: ", budget)
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
 
                     } else {
-                        console.log("Recurring is FALSE: ", occuranceValue)
-                        console.log("new budget: ", budget)
+                        budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) - parseFloat(budget.Categories[index].CategoryAmountTotal)).toString()
+                        budget.Categories[index].CategoryAmountUsed = "0"
+                        // console.log("Recurring is FALSE: ", occuranceValue)
+                        // console.log("new budget: ", budget)
                         window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                     }
                     
+                }
+                else if (id === "position") {
+                    budget.Categories[index].CategoryPositionID = occuranceValue;
+                    window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
                 
 
@@ -105,11 +123,12 @@ function EditBudget() {
                     CategoryAmountUsed: "0",
                     CategoryID: newGuid,
                     CategoryName: "",
-                    CategoryPositionID: "",
+                    CategoryPositionID: `${budget.Categories.length + 1}`,
                     IsRecurring: false,
                     PK: PK,
                     SK: SK,
-                    Type: "Category"
+                    Type: "Category",
+                    ExpensesList: []
 
                 }
                 // append category to budget
@@ -120,19 +139,35 @@ function EditBudget() {
             }
 
             function deleteCategory(index) {
+                budget.BudgetAmountTotal = (parseFloat(budget.BudgetAmountTotal) - parseFloat(budget.Categories[index].CategoryAmountTotal)).toString()
+                budget.BudgetAmountUsed = (parseFloat(budget.BudgetAmountUsed) - parseFloat(budget.Categories[index].CategoryAmountUsed)).toString()
                 budget.Categories.splice(index, 1)
-                console.log("new budget: ", budget)
+                // console.log("new budget: ", budget)
                 window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 window.location.reload()
             }
 
             function submitChanges(){
+                setDisabled(true)
                 // initiate edited budget variable
                 var editedBudget = window.localStorage.getItem('DefaultBudget')
-                console.log(editedBudget)
+                // console.log(editedBudget)
                 // parse the value
                 var parsedBudget = JSON.parse(editedBudget)
-                console.log(parsedBudget)
+                // console.log(parsedBudget)
+                // calculate total and used for budget
+                var BudgetTotal = 0
+                var BudgetUsed = 0
+                budget.Categories.map(cat => {
+                    if (cat.CategoryAmountTotal != "") {
+                        BudgetTotal += parseFloat(cat.CategoryAmountTotal)
+                    }
+                    if (cat.CategoryAmountUsed != "") {
+                        BudgetUsed += parseFloat(cat.CategoryAmountUsed)
+                    }
+                    // BudgetTotal += parseFloat(cat.CategoryAmountTotal)
+                    // BudgetUsed += parseFloat(cat.CategoryAmountUsed)
+                })
                 // create body object (For API Call) from updated budget
                 var body = {}
                 body.BudgetItem = {}
@@ -141,9 +176,9 @@ function EditBudget() {
                 body.BudgetItem.SK = {}
                 body.BudgetItem.SK.S = parsedBudget.SK
                 body.BudgetItem.BudgetAmountTotal = {}
-                body.BudgetItem.BudgetAmountTotal.S = parsedBudget.BudgetAmountTotal
+                body.BudgetItem.BudgetAmountTotal.S = BudgetTotal.toString()
                 body.BudgetItem.BudgetAmountUsed = {}
-                body.BudgetItem.BudgetAmountUsed.S = parsedBudget.BudgetAmountUsed
+                body.BudgetItem.BudgetAmountUsed.S = BudgetUsed.toString()
                 body.BudgetItem.BudgetID = {}
                 body.BudgetItem.BudgetID.S = parsedBudget.BudgetID
                 body.BudgetItem.BudgetName = {}
@@ -188,6 +223,7 @@ function EditBudget() {
                     catobj.IsRecurring.BOOL = cat.IsRecurring
                     catobj.Type = {}
                     catobj.Type.S = cat.Type
+                    catobj.ExpensesList = cat.ExpensesList
                     
                     // add updated category to list
                     body.Categories.push(catobj)
@@ -213,61 +249,100 @@ function EditBudget() {
                 fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets?BudgetID=${parsedBudget.BudgetID}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
+                    // console.log(result)
                     const expired = '{"message":"The incoming token has expired"}'
                     const Unauthorized = '{"message":"Unauthorized"}'
                     if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
-                        console.log("redirect to sign-in")
+                        // console.log("redirect to sign-in")
+                        setDisabled(false);
                         window.location.replace(loginURL);
                     }
                     else {
                         console.log("Success: ", result);
-                        window.location.replace(defaultBudgetURL)
+                        console.log("Body sent: ", JSON.stringify(body));
+                        if (result == "Update-Budget-Lambda completed successfully"){
+                            setDisabled(false);
+                            window.location.replace(defaultBudgetURL);
+                        }
+                        else {
+                            window.location.replace(defaultBudgetURL);
+                        }
                     }
-                }).catch(error => console.log('error', error));
+                }).catch(error => { 
+                    console.log('error', error);
+                    setDisabled(false);
+                    window.location.replace(defaultBudgetURL);
+                });
             }
+
+            budget.Categories.sort((a, b) => {
+                return Number(a.CategoryPositionID) - Number(b.CategoryPositionID)
+            });
+
             return(
                 <Container>
+                    <p>Welcome! Here you can change your budget's name as well as add/edit categories.</p>
                     <Form>
                         <Form.Group className="mb-3" controlId="bname" onChange={occurance => handleBNameChange(occurance.target.value)}>
                             <Form.Label className="d-flex">Budget Name</Form.Label>
                             <Form.Control type="text" placeholder={budget.BudgetName}  defaultValue={budget.BudgetName}/>
                         </Form.Group>
+                        <div className="sticky-top bg-light pt-2 pb-1 ">
+                            <p >Budget Total: {bTotal}</p>
+                        </div>
+                        
                         {budget.Categories.map((Category, index) => {
-                                console.log(Category)
+                                // console.log(Category)
                                 
                                 return(
-                                    <Container key={index} >
-                                        <Form.Group className="mb-3" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
-                                            <hr style={{color: 'white'}} />
+                                    <Card key={index} className="border-primary fw-normal mb-3 p-3" >
+                                        <Form.Group className="" controlId="cname" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
+                                            {/* <hr style={{color: 'black'}} /> */}
                                             <Form.Label className="d-flex">Category Name</Form.Label> 
                                             <Form.Control type="text" placeholder={Category.CategoryName}  defaultValue={Category.CategoryName}/>
                                         </Form.Group>
-                                        <Form.Group className="mb-3" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
+                                        <Form.Text className="text-muted d-flex mb-3">e.g. Groceries
+                                        </Form.Text>
+                                        <Form.Group className="" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
                                             <Form.Label className="d-flex">Max</Form.Label>
-                                            <Form.Control type="text" placeholder={Category.CategoryAmountTotal}  defaultValue={Category.CategoryAmountTotal}/>
+                                            <Form.Control type="text" required placeholder={Category.CategoryAmountTotal}  defaultValue={Category.CategoryAmountTotal}/>
                                         </Form.Group>
-                                        <Form.Group className="mb-6" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
+                                        <Form.Text className="text-muted d-flex mb-3" >
+                                            e.g. {budget.CurrencySymbol || "$"}500
+                                        </Form.Text>
+                                        <Form.Group className="" controlId="recurring" onChange={occurance => handleChangeInput(index, occurance.target.checked, occurance.target.id)}>
                                             <Form.Check className="d-flex gap-2" type="checkbox" label="Recurring" defaultChecked={Category.IsRecurring}/>
                                         </Form.Group>
-                                        <Button className="d-flex mt-4" variant="danger" onClick={ifclicked => deleteCategory(index)}>Delete Category</Button>
-                                        <hr style={{color: 'white'}} />
-                                    </Container>
+                                        <Form.Text className="text-muted d-flex mb-3">If checked, the amount used will be the same as the max and will not clear out at the end of the month.
+                                        </Form.Text>
+                                        <Form.Group className="" controlId="position" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
+                                            <Form.Label className="d-flex">Position</Form.Label>
+                                            <Form.Control type="text" placeholder={Category.CategoryPositionID}  defaultValue={Category.CategoryPositionID}/>
+                                        </Form.Group>
+                                        <Form.Text className="text-muted d-flex mb-6">
+                                            The category with the lowest postion number appears first. e.g. 0
+                                        </Form.Text>
+                                        <Button className="mt-4" variant="danger" onClick={ifclicked => deleteCategory(index)}>Delete Category</Button>
+                                        {/* <hr style={{color: 'black'}} /> */}
+                                    </Card>
                                     
                                 )
                             })}
-                        <Button className="mt-3" onClick={clicked => addCategory()}>Add Category</Button>
-                        <hr style={{color: 'white'}} />
-                        <Stack className="mt-3" direction="horizontal" gap="4">
-                            <Button className="mr-3 ms-auto" variant="secondary" type="cancel" href={defaultBudgetURL}>
+                        <Button className="mt-2 mb-2" onClick={clicked => addCategory()}>Add Category</Button>
+                        <hr style={{color: 'black'}} />
+                        <Stack className="mt-3" direction="horizontal" gap="5">
+                            <Button className="px-3 ms-auto" variant="secondary" type="cancel" href={defaultBudgetURL}>
                                 Cancel
                             </Button>
-                            <Button variant="primary"  onClick={clicked => submitChanges()}>
-                                Submit
+                            <Button className="px-4" variant="success" disabled={disabled}  onClick={clicked => submitChanges()}>
+                                {disabled? "Loading..." : "Save"}
                             </Button>
                         </Stack>
                         
                     </Form>
+
+                    {/* <h3 className="mt-5" >Preview</h3>
+                    
                     <hr style={{color: 'white'}} />
                     
                     <div style={{
@@ -277,12 +352,12 @@ function EditBudget() {
                         alignItems: "flex-start"
                     }}>
                         {budget.Categories.map((Category, index) => {
-                            console.log(Category)
+                            // console.log(Category)
                             return(
                                 <CategoryForm key={index} index={index} budgetid={Category.BudgetID} budget={budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
                             )
                         })}
-                    </div>
+                    </div> */}
                         
                 </Container>
 
@@ -296,9 +371,9 @@ function EditBudget() {
                 <BB_Nav/>
             </Container>
             {renderForm(DefaultBudget)}
-            <hr style={{
-                    color: 'white'
-                }} />
+            {/* <hr style={{
+                    color: 'black'
+                }} /> */}
         </Container>
     )
 }
