@@ -22,7 +22,7 @@ function Account() {
 
 
 
-    async function handleDeleteAccount() {
+    function handleDeleteAccount() {
         setDisableDeleteAccount(true);
         // Get all Budgets
         // make API Call
@@ -37,9 +37,9 @@ function Account() {
         mode: 'cors'
         };
         console.log('Getting Budgets (API Call)');
-        await fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
+        fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
         .then(response => response.json())
-        .then(result => {
+        .then(async result => {
             // console.log("Get Budgets res: ", result)
             const expired = '{"message":"The incoming token has expired"}'
             const Unauthorized = '{"message":"Unauthorized"}'
@@ -54,7 +54,7 @@ function Account() {
                 window.location.replace(DefaultBudgetURL);
             }
             else {
-                // console.log("Budgets: ", result);
+                console.log("Budgets: ", result);
                 // get default budget ID
                 // put each budgetID in an array
 
@@ -84,49 +84,69 @@ function Account() {
                         }
                         else {
                             console.log("Budget Deleted response:", result);
+                            return "completed"
                         }
                     })
                     .catch(error => console.log('error', error));
                 }
 
-                async function process(promises) {
-                    console.time(`process`);
-                    let responses = await Promise.all(promises);
-                    for(let r of responses) {}
-                    console.timeEnd(`process`);
-                    return;
-                }
-
-                async function handler(promises) {
-                                        
-                    await process(promises);
-                    console.log(`processing is complete`);
-                }
+                result.Budgets.forEach(async Budget => {
+                    deleteBudgetRequest(Budget.BudgetID);
+                });
+                console.log('forEach loop finished');
                 
 
-                let promises = [];
-                result.Budgets.forEach(Budget => {
-                    promises.push(deleteBudgetRequest(Budget.BudgetID));
-                });
-                console.log('promises', promises);
-                handler(promises);
+
+
+                // async function process(promises) {
+                //     console.time(`process`);
+                //     let responses = await Promise.all(promises);
+                //     for(let r of responses) {}
+                //     console.timeEnd(`process`);
+                //     return;
+                // }
+
+                // async function handler(promises) {
+                                        
+                //     await process(promises);
+                //     console.log(`processing is complete`);
+                // }
+                
+
+                // let promises = [];
+                // result.Budgets.forEach(Budget => {
+                //     promises.push(deleteBudgetRequest(Budget.BudgetID));
+                // });
+                // console.log('promises', promises);
+                // handler(promises);
+
+                async function DeleteCognitoAccount(){
+                    // await result.Budgets.forEach(async Budget => {
+                    //     await deleteBudgetRequest(Budget.BudgetID);
+                    // });
+                    // console.log('forEach loop finished');
+
+                    console.log('deleting user Account...')
+                    // Delete User Account in Cognito
+                    const client = new CognitoIdentityProviderClient({
+                        region: "us-east-1",
+                        identityPoolId: "us-east-1_PJGF8x1h5"
+                    })
+                    const command = new DeleteUserCommand({AccessToken: `${Token}`});
+                    const response = await client.send(command);
+                    console.log("Delete Account Response: ", response);
+
+                    setDisableDeleteAccount(false);
+                    setModalShow(false);
+                    window.location.replace('/');
+                }
+                setTimeout( () => { DeleteCognitoAccount(); }, 5000);
 
 
             }
         }).catch(error => console.log('error', error));
         
-        // Delete User Account in Cognito
-        const client = new CognitoIdentityProviderClient({
-            region: "us-east-1",
-            identityPoolId: "us-east-1_PJGF8x1h5"
-        })
-        const command = new DeleteUserCommand({AccessToken: `${Token}`})
-        const response = await client.send(command);
-        console.log("Response: ", response)
 
-        setDisableDeleteAccount(false);
-        setModalShow(false);
-        window.location.replace('/');
     }
     
 
@@ -161,7 +181,7 @@ function Account() {
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                         <Button variant="secondary" onClick={() => setModalShow(false)}>Cancel</Button>
-                        <Button variant="danger" disabled={disableDeleteAccount} onClick={handleDeleteAccount} >Delete Account</Button>
+                        <Button variant="danger" disabled={disableDeleteAccount} onClick={handleDeleteAccount} >{disableDeleteAccount ? "Deleting..." : "Delete Account"}</Button>
                 </Modal.Footer>
                 
             </Modal>

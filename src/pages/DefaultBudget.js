@@ -12,13 +12,10 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { currencyFormatter } from "../components/Utils";
 Chart.register(ChartDataLabels);
 
-// try api call to get budgets (or check if stored token exists/is valid), if get budgets works, get categories for default budget and display them to the screen
-// if get budgets doesn't work, redirect to cognito sign in page. 
 
 function DefaultBudget() {
     const loginURL = SignInURL
     const [defaultBudget, setDefaultBudget] = useState(null)
-    // const [reportData, setReportData] = useState(null);
     const CreateBudgetPage = CreateBudgetURL
     const EditBudgetLink = EditBudgetURL
 
@@ -32,7 +29,6 @@ function DefaultBudget() {
         // make API Call
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${Token}`);
-        // myHeaders.append("Access-Control-Allow-Origin", '*')
 
         var requestOptions = {
         method: 'GET',
@@ -40,7 +36,7 @@ function DefaultBudget() {
         redirect: 'follow',
         mode: 'cors'
         };
-        console.log('Getting Budgets (API Call)');
+        // console.log('Getting Budgets (API Call)');
         fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
         .then(response => response.json())
         .then(result => {
@@ -65,14 +61,14 @@ function DefaultBudget() {
             }
             else if (JSON.stringify(result) == `{"message":"Internal server error"}`) {
                 
-                console.log("an error occured", result)
+                // console.log("an error occured", result)
                 setDefaultBudget(message => {
                     return JSON.stringify({error: "error"})
                 })
             }
             else {
-                console.log("Budgets: ", result);
-                console.log("string", JSON.stringify(result));
+                // console.log("Budgets: ", result);
+                // console.log("string", JSON.stringify(result));
                 // get default budget ID
                 var DefaultBudgetID = null;
                 var DBudget = null;
@@ -102,7 +98,7 @@ function DefaultBudget() {
                 redirect: 'follow',
                 mode: 'cors'
                 };
-                console.log('Getting Categories (API Call)');
+                // console.log('Getting Categories (API Call)');
                 fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/categories?BudgetID=${DefaultBudgetID}`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
@@ -140,14 +136,14 @@ function DefaultBudget() {
                         redirect: 'follow',
                         mode: 'cors'
                         };
-                        console.log('Getting Report Data (API Call)');
+                        // console.log('Getting Report Data (API Call)');
                         fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/reportdata?BudgetID=${DefaultBudgetID}`, requestOptions)
                         .then(response => response.json())
                         .then(result => {
                             // console.log('ReportCallResponse', result);
                             window.localStorage.setItem('History', JSON.stringify(result));
                             // setReportData(() => JSON.stringify(result));
-                            console.log('updating State for setDefaultBudget');
+                            // console.log('updating State for setDefaultBudget');
                             setDefaultBudget(MyBudget => {
                                     return JSON.stringify({...defaultBudget, ...result})
                                 });
@@ -362,7 +358,7 @@ function DefaultBudget() {
 
                 return newState
             })
-            console.log('states', states);
+            // console.log('states', states);
 
             // const state = {
             //     labels: [],
@@ -415,12 +411,16 @@ function DefaultBudget() {
                             }
                         }
                         return (
-                            <div style={{  backgroundColor: 'white', paddingRight: '10px', paddingLeft: '5px',  paddingBottom: '10px' }} key={i}>
-                                {/* <Card.Body> */}
-                                    <Bar data={state} options={options} />
-                                {/* </Card.Body> */}
-                                    
+                            <div key={i}>
+                                <div style={{  backgroundColor: 'white', paddingRight: '10px', paddingLeft: '5px',  paddingBottom: '10px', borderRadius: '10px' }} >
+                                    {/* <Card.Body> */}
+                                        <Bar data={state} options={options} />
+                                    {/* </Card.Body> */}
+                                        
+                                </div>
+                                {i == 0 && <hr/>}
                             </div>
+                            
                         )
                     })}
                 </Container>
@@ -438,8 +438,8 @@ function DefaultBudget() {
             <hr style={{
                     color: 'black'
                 }} />
-            <h2 className="mb-0">Reports</h2>
-            <p>Last 12 months</p>
+            {defaultBudget && <h2 className="mb-0">Reports</h2>}
+            {defaultBudget && <p>Last 12 months</p>}
             {RenderReportData(defaultBudget)}
         </Container>
     )

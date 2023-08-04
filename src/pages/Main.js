@@ -5,10 +5,27 @@ import DesktopBudgetView from "../assets/DesktopBudgetView.png"
 import DesktopEditBudgetView from "../assets/DesktopEditBudgetView.png"
 import PhoneBudgetView from "../assets/PhoneBudgetView.jpg"
 import PhoneEditBudget from "../assets/PhoneEditBudget.jpg"
+import editBudgetScreen from "../assets/editBudgetScreen.jpg"
 import './Main.css'
 import { SignInURL } from "../components/Vars.js"
+import Footer from "../components/Footer.js"
 
 function Main() {
+    function handleImageClick(e) {
+        let image = e.target;
+        console.log('e', e);
+        console.log('image', image);
+        if (image.style.transform == "scale(1.25)") {
+            image.style.transform = "scale(1)";
+            document.body.style.overflow = "visible";
+        }
+        else {
+            image.style.transform = "scale(1.25)";
+            image.style.transition = "transform 0.25s ease";
+            document.body.style.overflow = "hidden";
+        }
+        
+    }
     return(
         <Container className="my-4" >
             <header>
@@ -36,7 +53,7 @@ function Main() {
                                 <li>What's left in my food budget?</li>
                                 <li>How much will I save this month on <span style={{textDecoration: "underline", whiteSpace: "pre"}}>                  </span>?</li>
                             </ul>
-                            <p>Budget boy helps you answer these questions confidently!</p>
+                            <p>Budget Boy helps you answer these questions confidently!</p>
                         </div>
                         <div className="body-section">
                             <h2 className="mb-3">What makes Budget Boy special?</h2>
@@ -63,10 +80,17 @@ function Main() {
                                 screen where you can start adding your categories and their amounts.
                             </p>
                             {/* Insert picture of Category Card on Edit Budget page */}
-                            <p><br/> Legend</p>
-                            <p>
+                            <img
+                                className="body-images"
+                                // style={{height: 500, marginLeft: 100}}
+                                src={editBudgetScreen}
+                                onClick={handleImageClick}
+                                alt="Edit Budget Screen"
+                                />
+                            {/* <p><br/> Legend</p> */}
+                            <p className="mt-3">
                                 <b>Category Name:</b> Name of the category like "Groceries", "Gas", or "Eating out." <br/>
-                                <b>Max:</b> budget limit for this category like $200. <br/>
+                                <b>Max:</b> budget limit for this category like "$200." <br/>
                                 <b>Recurring:</b> Check this box for recurring expenses such as Netflix, Rent, or Electricity. When checked, the category max amount will be subtracted from your 
                                 overall budget total at the beginning of the month. <br/> 
                                 <b>Position:</b> this number identifies the order this category will appear on the default budget screen and in reports. <br/>
@@ -170,20 +194,7 @@ function Main() {
                     </Container>
                     
                 </Stack>
-            </div>
-            <footer  >
-                <Stack direction="horizontal" gap={3}>
-                    <div>
-                        <a>Privacy</a>
-                    </div>
-                    <div>
-                        <a>Terms</a>
-                    </div>
-                    
-                </Stack>
-                
-            </footer>
-            
+            </div>            
         </Container>
     )
 }

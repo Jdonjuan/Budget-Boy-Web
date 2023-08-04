@@ -26,6 +26,7 @@ function EditBudget() {
     var DefaultBudget = window.localStorage.getItem('DefaultBudget')
     // console.log(DefaultBudget)
     // const [addCategory, setAddCategory] = useState(0)
+    const [bTotal, setBTotal] = useState(`${JSON.parse(DefaultBudget).BudgetAmountTotal}`);
     
 
     function renderForm(BudgetResponse) {
@@ -61,11 +62,14 @@ function EditBudget() {
                     budget.Categories[index].CategoryAmountTotal = occuranceValue
                     var newBudgetMax = 0
                     budget.Categories.map((Category, index) => {
-                        // console.log(parseFloat(Category.CategoryAmountTotal))
-                        newBudgetMax += parseFloat(Category.CategoryAmountTotal)
+                        // console.log(typeof Category.CategoryAmountTotal)
+                        if (Category.CategoryAmountTotal != "") {
+                            newBudgetMax += parseFloat(Category.CategoryAmountTotal);
+                        }
                     })
                     // console.log(newBudgetMax)
-                    budget.BudgetAmountTotal = newBudgetMax.toString()
+                    budget.BudgetAmountTotal = newBudgetMax.toString();
+                    setBTotal(newBudgetMax);
                     // console.log("new budget: ", budget)
                     window.localStorage.setItem('DefaultBudget', JSON.stringify(budget));
                 }
@@ -119,7 +123,7 @@ function EditBudget() {
                     CategoryAmountUsed: "0",
                     CategoryID: newGuid,
                     CategoryName: "",
-                    CategoryPositionID: `${budget.Categories.length}`,
+                    CategoryPositionID: `${budget.Categories.length + 1}`,
                     IsRecurring: false,
                     PK: PK,
                     SK: SK,
@@ -155,8 +159,14 @@ function EditBudget() {
                 var BudgetTotal = 0
                 var BudgetUsed = 0
                 budget.Categories.map(cat => {
-                    BudgetTotal += parseFloat(cat.CategoryAmountTotal)
-                    BudgetUsed += parseFloat(cat.CategoryAmountUsed)
+                    if (cat.CategoryAmountTotal != "") {
+                        BudgetTotal += parseFloat(cat.CategoryAmountTotal)
+                    }
+                    if (cat.CategoryAmountUsed != "") {
+                        BudgetUsed += parseFloat(cat.CategoryAmountUsed)
+                    }
+                    // BudgetTotal += parseFloat(cat.CategoryAmountTotal)
+                    // BudgetUsed += parseFloat(cat.CategoryAmountUsed)
                 })
                 // create body object (For API Call) from updated budget
                 var body = {}
@@ -268,13 +278,19 @@ function EditBudget() {
             budget.Categories.sort((a, b) => {
                 return Number(a.CategoryPositionID) - Number(b.CategoryPositionID)
             });
+
             return(
                 <Container>
+                    <p>Welcome! Here you can change your budget's name as well as add/edit categories.</p>
                     <Form>
                         <Form.Group className="mb-3" controlId="bname" onChange={occurance => handleBNameChange(occurance.target.value)}>
                             <Form.Label className="d-flex">Budget Name</Form.Label>
                             <Form.Control type="text" placeholder={budget.BudgetName}  defaultValue={budget.BudgetName}/>
                         </Form.Group>
+                        <div className="sticky-top bg-light pt-2 pb-1 ">
+                            <p >Budget Total: {bTotal}</p>
+                        </div>
+                        
                         {budget.Categories.map((Category, index) => {
                                 // console.log(Category)
                                 
@@ -289,7 +305,7 @@ function EditBudget() {
                                         </Form.Text>
                                         <Form.Group className="" controlId="max" onChange={occurance => handleChangeInput(index, occurance.target.value, occurance.target.id)}>
                                             <Form.Label className="d-flex">Max</Form.Label>
-                                            <Form.Control type="text" placeholder={Category.CategoryAmountTotal}  defaultValue={Category.CategoryAmountTotal}/>
+                                            <Form.Control type="text" required placeholder={Category.CategoryAmountTotal}  defaultValue={Category.CategoryAmountTotal}/>
                                         </Form.Group>
                                         <Form.Text className="text-muted d-flex mb-3" >
                                             e.g. {budget.CurrencySymbol || "$"}500
@@ -325,7 +341,7 @@ function EditBudget() {
                         
                     </Form>
 
-                    <h3 className="mt-5" >Preview</h3>
+                    {/* <h3 className="mt-5" >Preview</h3>
                     
                     <hr style={{color: 'white'}} />
                     
@@ -341,7 +357,7 @@ function EditBudget() {
                                 <CategoryForm key={index} index={index} budgetid={Category.BudgetID} budget={budget} name={Category.CategoryName} amount={Number(Category.CategoryAmountUsed)} max={Number(Category.CategoryAmountTotal)}/>
                             )
                         })}
-                    </div>
+                    </div> */}
                         
                 </Container>
 
@@ -355,9 +371,9 @@ function EditBudget() {
                 <BB_Nav/>
             </Container>
             {renderForm(DefaultBudget)}
-            <hr style={{
+            {/* <hr style={{
                     color: 'black'
-                }} />
+                }} /> */}
         </Container>
     )
 }

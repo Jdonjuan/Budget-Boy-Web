@@ -3,11 +3,10 @@ import { Card, ProgressBar } from "react-bootstrap";
 import { currencyFormatter } from "./Utils";
 
 export default function BudgetTitle ({ categoryid, name, amount, max, budget, index}) {
-
     const classNames = ["rounded-pill border-primary"]
     if (Number(amount) > Number(max)) {
         // console.log("Amount is: ", amount);
-        // console.log("Max is: ", max)
+        console.log("Max is: ", max)
         // console.log("Amount > Max?: ", (parseFloat(amount) > parseFloat(max)))
         classNames.push("bg-danger bg-opacity-25")
     }

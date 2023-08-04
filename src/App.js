@@ -16,6 +16,8 @@ import DefaultBudget from './pages/DefaultBudget';
 import EditBudget from './pages/EditBudget';
 import CreateBudget from './pages/CreateBudget';
 import Account from './pages/Account';
+import Footer from './components/Footer';
+import { Container } from 'react-bootstrap';
 
 function App() {
   return (
@@ -33,6 +35,10 @@ function App() {
           <Route path='*' element={<Error404/>} />
         </Routes>
       </Router>
+      <Container>
+        <Footer />
+      </Container>
+      
     </div>
   );
 }
