@@ -59,7 +59,7 @@ function MyBudgets() {
                 .catch(error => console.log('error', error));
     }
 
-    var accessToken = window.localStorage.getItem('BB_USER_TOKEN')  
+    var accessToken = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
     getBudgets(accessToken)
     
 

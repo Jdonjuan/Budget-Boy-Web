@@ -22,7 +22,7 @@ function EditBudget() {
                 return "Budget Updated."
     }
 
-    var accessToken = window.localStorage.getItem('BB_USER_TOKEN')  
+    var accessToken = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
     var DefaultBudget = window.localStorage.getItem('DefaultBudget')
     // console.log(DefaultBudget)
     // const [addCategory, setAddCategory] = useState(0)
@@ -231,7 +231,7 @@ function EditBudget() {
                 // make api call to update budget
                 console.log("body", body)
                 // post new budget (update budget api)
-                var Token = window.localStorage.getItem('BB_USER_TOKEN');
+                var Token = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", `Bearer ${Token}`);
                 myHeaders.append("BudgetID", `${parsedBudget.BudgetID}`);

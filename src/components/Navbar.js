@@ -36,8 +36,9 @@ function BB_Nav() {
           <Button className='mt-3 mb-3' onClick={function logoutUser() {
                     console.log("user has been logged out")
                     window.localStorage.setItem('BB_USER_TOKEN', null);
+                    window.localStorage.setItem('BB_refresh', null);
                     window.localStorage.setItem('DefaultBudget', null);
-                    window.localStorage.setItem('EMAIL', null)
+                    window.localStorage.setItem('EMAIL', null);
                     }} href={SignOutLink}>Sign Out</Button>
         </Navbar.Collapse>
       </Container>

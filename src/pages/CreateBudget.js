@@ -14,7 +14,7 @@ function CreateBudget() {
     // const [Budgets, setBudgets] = useState(null)
     // const CreateBudgetPage = "http://localhost:3000/CreateBudget"
 
-    var accessToken = window.localStorage.getItem('BB_USER_TOKEN')
+    var accessToken = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
     // const [email, setEmail] = useState()
     // get user's email
     async function getEmail() {
@@ -367,7 +367,7 @@ function CreateBudget() {
             // ------------------------------
             // console.log("body for API Call", body)
             // post new budget (update budget api)
-            var Token = window.localStorage.getItem('BB_USER_TOKEN');
+            var Token = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
             var myHeaders = new Headers();
             myHeaders.append("Authorization", `Bearer ${Token}`);
             myHeaders.append("BudgetID", `${parsedBudget.BudgetID}`);

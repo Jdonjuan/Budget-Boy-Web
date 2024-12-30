@@ -1,5 +1,6 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { useRef } from "react";
+import { SignInURL } from "./Vars";
 
 export default function AddBudgetModal({ show, handleClose, budget, budgetid, amountused, index}) {
     console.log("Show: ",show)
@@ -106,8 +107,8 @@ export default function AddBudgetModal({ show, handleClose, budget, budgetid, am
 
         console.log("body", body)
         // post new budget (update budget api)
-        var loginURL = "https://budgetboy.auth.us-east-1.amazoncognito.com/login?client_id=1k6ld9m89ikfp4nptvshj5aqd&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+profile&redirect_uri=http://localhost:3000/DefaultBudget"
-        var Token = window.localStorage.getItem('BB_USER_TOKEN');
+        var loginURL = SignInURL
+        var Token = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${Token}`);
         myHeaders.append("BudgetID", `${budget.BudgetID}`);

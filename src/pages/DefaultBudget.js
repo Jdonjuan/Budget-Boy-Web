@@ -23,9 +23,179 @@ function DefaultBudget() {
     window.localStorage.setItem('EMAIL', null);
     window.localStorage.setItem('History', null);
 
-    // window.localStorage.setItem("BB_USER_TOKEN", "");
+    // if access token works... great!
+    // if access token doesn't work, try refresh token
+    // if refresh token doesn't work, redirect to sign-in
+
+    function authorizationCodeAuth() {
+        console.log('checking for auth code in search params');
+        let params = new URLSearchParams(document.location.search);
+        let code = params.get("code"); 
+        console.log('code', code);
+
+        if (code) {
+            // make API Call to get auth token
+            var myHeaders = new Headers();
+            // myHeaders.append("Authorization", `Bearer ${Token}`);
+            // myHeaders.append("BudgetID", `${DefaultBudgetID}`)
+            // myHeaders.append("Access-Control-Allow-Origin", '*')
+    
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow',
+                mode: 'cors'
+            };
+            fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/auth?code=${code}`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log('auth code returned', result);
+                const expired = '{"message":"The incoming token has expired"}';
+                const Unauthorized = '{"message":"Unauthorized"}';
+                const invalidGrant = '{"error":"invalid_grant"}';
+                const clientUnauthorized = '{error: "unauthorized_client"}';
+                if ((result) && (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized || JSON.stringify(result) == invalidGrant || JSON.stringify(result) == clientUnauthorized)) {
+                    // Try authCode
+                    console.log('Auth code failed');
+                    // authorizationCodeAuth();
+                    // console.log("redirect to sign-in")
+                    // window.location.replace(loginURL);
+                    // setDefaultBudget(message => {
+                    //     return JSON.stringify(result)
+                    // })
+                }
+                else {
+                    console.log('Auth Code Success!!');
+                    console.log('access_token', result.access_token);
+                    console.log('refresh_token', result.refresh_token);
+                    // Store Access Token
+                    localStorage.setItem('BB_USER_TOKEN', JSON.stringify(result.access_token));
+                    // Store Refresh Token
+                    localStorage.setItem('BB_refresh', JSON.stringify(result.refresh_token));
+                    
+                    // try again
+                    getDefaultBudget(result.access_token);
+                }
+
+            })
+            .catch(error => {
+                console.log('error', error)
+            });
+        }
+        else {
+            console.log('no code in url, redirecting');
+            window.location.replace(loginURL);
+        }
+    }
+
+    function refreshAccessToken() {
+        // get refresh token from local storage
+        // make api call to authenticate user lambda
+        console.log('refreshing access');
+        let refresh = localStorage.getItem('BB_refresh') ? JSON.parse(localStorage.getItem('BB_refresh')) : false; 
+        console.log('refresh', refresh);
+
+        if (refresh) {
+            // make API Call to get auth token
+            var myHeaders = new Headers();
+            // myHeaders.append("Authorization", `Bearer ${Token}`);
+            // myHeaders.append("BudgetID", `${DefaultBudgetID}`)
+            // myHeaders.append("Access-Control-Allow-Origin", '*')
+    
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow',
+                mode: 'cors'
+            };
+            fetch(`https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/auth?refresh=${refresh}`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log('refresh call returned', result);
+                const expired = '{"message":"The incoming token has expired"}';
+                const Unauthorized = '{"message":"Unauthorized"}';
+                const invalidGrant = '{"error":"invalid_grant"}';
+                if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized || JSON.stringify(result) == invalidGrant) {
+                    // Try authCode
+                    console.log('trying authorization Code instead of refreshing')
+                    authorizationCodeAuth();
+                    // console.log("redirect to sign-in")
+                    // window.location.replace(loginURL);
+                    // setDefaultBudget(message => {
+                    //     return JSON.stringify(result)
+                    // })
+                }
+                else {
+                    console.log('Refresh Success!!');
+                    console.log('access_token', result.access_token);
+                    // Store Access Token
+                    localStorage.setItem('BB_USER_TOKEN', JSON.stringify(result.access_token));
+                    
+                    // try again
+                    getDefaultBudget(result.access_token);
+                }
+            })
+            .catch(error => {
+                console.log('error', error);
+                authorizationCodeAuth();
+            });
+        }
+        else {
+            console.log('no refresh token found.');
+            authorizationCodeAuth();
+        }
+    }
+
+    useEffect(() => {
+        
+
+
+
+        // const clientId = 'YOUR_CLIENT_ID';
+        // const clientSecret = 'YOUR_CLIENT_SECRET';
+        // const refreshToken = 'YOUR_REFRESH_TOKEN';
+
+        // const tokenEndpoint = 'https://YOUR_COGNITO_DOMAIN/oauth2/token';
+
+        // const refreshAccessToken = async () => {
+        //     const params = new URLSearchParams();
+        //     params.append('grant_type', 'refresh_token');
+        //     params.append('client_id', clientId);
+        //     params.append('refresh_token', refreshToken);
+
+        //     const headers = new Headers();
+        //     headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        //     headers.append('Authorization', 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`));
+
+        //     try {
+        //         const response = await fetch(tokenEndpoint, {
+        //             method: 'POST',
+        //             headers: headers,
+        //             body: params
+        //         });
+
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not ok ' + response.statusText);
+        //         }
+
+        //         const data = await response.json();
+        //         const { access_token, id_token, refresh_token } = data;
+        //         console.log('Access Token:', access_token);
+        //         console.log('ID Token:', id_token);
+        //         console.log('Refresh Token:', refresh_token);
+        //     } catch (error) {
+        //         console.error('Error refreshing tokens:', error);
+        //     }
+        // };
+
+        // refreshAccessToken();
+
+    }, []);
+
+    // window.localStorage.setItem("BB_USER_TOKEN", "eyJraWQiOiJSODZ6ZUpINEl1U1RHeUpNUTI2XC82azBTSFYwakRmVFlqTWJkczdycmFrbz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0YzA3OGJkMy0wYjZmLTRlYzQtOTZhNi1mNDM0MTlmMWUyOTAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9QSkdGOHgxaDUiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiIxazZsZDltODlpa2ZwNG5wdHZzaGo1YXFkIiwib3JpZ2luX2p0aSI6IjhjOGExMWNiLTM3MzAtNDQ1OS1hNmZlLWFhNGNmY2E1MWZkYiIsImV2ZW50X2lkIjoiNDg4MWU5NTUtMmYzZS00NDM5LWJkYjgtZGU0MmVkZDhhMzg0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiBvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF1dGhfdGltZSI6MTczNTQ0NDkwMSwiZXhwIjoxNzM1NTMxMzAxLCJpYXQiOjE3MzU0NDQ5MDEsImp0aSI6IjlmZDQxOTc0LWZmZDAtNGMyNS1hMjFlLWMyOTIxODE1M2E5MyIsInVzZXJuYW1lIjoiNGMwNzhiZDMtMGI2Zi00ZWM0LTk2YTYtZjQzNDE5ZjFlMjkwIn0.ZfGofSqQhNKcYMGcovVB4tal4NJB82IZ5Ytkfk7VJtcFFZvIkU2EpSN7IiJdOZ6XSXpwmYCFHE3Gb2m_YMiHTSm2GT7gSQGGMiqXhb710bihjUNVBlLVdB_FG9Gx1RkGd_khxhONHEuWi4Os1J86QDlHxO69iXb8IrHG66B-Euj7feConVKmNwrdAcweBLQl8mGh7ROqWWk7t9P17zz_2igRVVethAeKKxPySG-dPz7oLx0x2KN8xJ-md7wUbrIYYXDFX5167hjA7bTysk8XR6nAoIMkpNTw3NHdKkzbc94_FTEA2afRSDc5O3hCYjKnwe1kEcAlQY4_LVPGZsUEZg");
 
     function getDefaultBudget(Token) {
+        console.log('get budgets token:', Token);
         // make API Call
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${Token}`);
@@ -40,24 +210,28 @@ function DefaultBudget() {
         fetch("https://82u01p1v58.execute-api.us-east-1.amazonaws.com/Prod/budgets", requestOptions)
         .then(response => response.json())
         .then(result => {
-            // console.log("Get Budgets res: ", result)
+            console.log("Get Budgets res: ", result)
             const expired = '{"message":"The incoming token has expired"}'
             const Unauthorized = '{"message":"Unauthorized"}'
-            if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized) {
+            const invalidGrant = '{"error":"invalid_grant"}'
+            if (JSON.stringify(result) === expired || JSON.stringify(result) === Unauthorized ) {
+                // Try RefreshToken
+                console.log('get budgets failed');
+                refreshAccessToken();
                 // console.log("redirect to sign-in")
-                window.location.replace(loginURL);
-                setDefaultBudget(message => {
-                    return JSON.stringify(result)
-                })
+                // window.location.replace(loginURL);
+                // setDefaultBudget(message => {
+                //     return JSON.stringify(result)
+                // })
             }
             else if (JSON.stringify(result) === '{"Budgets":[]}') {
                 
                 // console.log("User has no budgets", result)
                 // console.log("redirect to Create Budget page")
                 window.location.replace(CreateBudgetPage);
-                setDefaultBudget(message => {
-                    return JSON.stringify(result)
-                })
+                // setDefaultBudget(message => {
+                //     return JSON.stringify(result)
+                // })
             }
             else if (JSON.stringify(result) == `{"message":"Internal server error"}`) {
                 
@@ -190,28 +364,40 @@ function DefaultBudget() {
         
     }
         
-    // Get token from URL if exists
-    var currentURL = window.location;
-    var token = currentURL.hash;
-    var accessToken = new URLSearchParams(token).get('access_token');
-    // console.log(accessToken);
-    // window.localStorage.setItem('BB_USER_TOKEN', accessToken);    
-    // if no token in URL
-    if (accessToken === null) {
-        // console.log('Token Not in url')
-        // get stored token
-        var accessToken = window.localStorage.getItem('BB_USER_TOKEN')
-        // console.log('stored Token:', accessToken)
+    // // Get token from URL if exists
+    // var currentURL = window.location;
+    // var token = currentURL.hash;
+    // var accessToken = new URLSearchParams(token).get('access_token');
+    // // console.log(accessToken);
+    // // window.localStorage.setItem('BB_USER_TOKEN', accessToken);    
+    // // if no token in URL
+    // if (accessToken === null) {
+    //     // console.log('Token Not in url')
+    //     // get stored token
+    //     var accessToken = window.localStorage.getItem('BB_USER_TOKEN')
+    //     // console.log('stored Token:', accessToken)
         
-        getDefaultBudget(accessToken)
-    }
-    // if there is a token in the url
-    else {
-        // console.log('Token in URL')
-        window.localStorage.setItem('BB_USER_TOKEN', accessToken);
-        getDefaultBudget(accessToken)
+    //     getDefaultBudget(accessToken)
+    // }
+    // // if there is a token in the url
+    // else {
+    //     // console.log('Token in URL')
+    //     window.localStorage.setItem('BB_USER_TOKEN', accessToken);
+    //     getDefaultBudget(accessToken)
 
+    // }
+
+    // Start here
+    let accessToken = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
+    if (accessToken) {
+        console.log('stored token', accessToken);
+        getDefaultBudget(accessToken);
     }
+    else {
+        refreshAccessToken();
+    }
+
+    // authorizationCodeAuth();
     
     
 

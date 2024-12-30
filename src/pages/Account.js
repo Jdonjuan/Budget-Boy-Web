@@ -12,7 +12,7 @@ import { CognitoIdentityProvider, CognitoIdentityProviderClient, DeleteUserComma
 function Account() {
     const [modalShow, setModalShow] = useState(false);
     const [ disableDeleteAccount, setDisableDeleteAccount ] = useState(false);
-    var Token = window.localStorage.getItem('BB_USER_TOKEN');
+    var Token = JSON.parse(window.localStorage.getItem('BB_USER_TOKEN'));
     var DefaultBudget = JSON.parse(window.localStorage.getItem('DefaultBudget'));
 
     if (!DefaultBudget?.Email) {
